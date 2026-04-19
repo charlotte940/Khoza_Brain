@@ -234,11 +234,13 @@ const CAT_SINGULAR={countries:"country",vegetables:"vegetable",fruits:"fruit",co
 // so the pill can tint the icon to match its category title.
 
 const BRAIN_LINES=(
-<g fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
-  <path d="M -1 0 L -1 11 L -4 11 Q -10 11 -10 6 Q -11 0 -6 -1 Q -5 -3 -1 -2"/>
-  <path d="M 1 0 L 1 11 L 4 11 Q 10 11 10 6 Q 11 0 6 -1 Q 5 -3 1 -2"/>
-  <path d="M -4 4 Q -7 5 -5 8"/>
-  <path d="M 4 4 Q 7 5 5 8"/>
+<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round">
+  <path d="M -9 2 Q -10 -3 -6 -5 Q -5 -8 -2 -7 Q 0 -9 2 -7 Q 5 -8 6 -5 Q 10 -3 9 2 Q 10 7 6 9 Q 3 11 0 10 Q -3 11 -6 9 Q -10 7 -9 2 Z"/>
+  <path d="M 0 -7 Q -1 0 0 10"/>
+  <path d="M -5 -3 Q -7 0 -5 3"/>
+  <path d="M -3 4 Q -5 6 -3 8"/>
+  <path d="M 5 -3 Q 7 0 5 3"/>
+  <path d="M 3 4 Q 5 6 3 8"/>
 </g>
 );
 
@@ -355,6 +357,10 @@ radial-gradient(ellipse 50% 40% at 50% 50%,rgba(191,90,242,0.04) 0%,transparent 
 /* LANDING */
 .landing{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;}
 .landing-title{font-family:'Black Han Sans',sans-serif;text-align:center;line-height:1.05;animation:titleIn 1s cubic-bezier(.34,1.2,.64,1);position:relative;z-index:1;}
+.landing-brain-wrap{position:relative;z-index:1;margin-bottom:14px;animation:brainIn 1s cubic-bezier(.34,1.4,.64,1);filter:drop-shadow(0 0 24px rgba(255,127,160,.45));}
+.landing-brain{color:#ff7fa0;animation:brainPulse 2.4s ease-in-out infinite;}
+@keyframes brainIn{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.1) rotate(6deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes brainPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 @keyframes titleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
 .lt-family{font-size:13px;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:12px;display:block;}
 .lt-last{font-size:clamp(44px,9vw,80px);background:linear-gradient(150deg,#fff 30%,rgba(255,255,255,.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -899,6 +905,11 @@ return(
         {particles.map((p,i)=>(
           <div key={i} className="lt-p" style={{left:p.left,width:p.size,height:p.size,background:p.color,animationDuration:`${p.dur}s`,animationDelay:`${p.delay}s`}}/>
         ))}
+        <div className="landing-brain-wrap">
+          <svg width="160" height="160" viewBox="-14 -14 28 28" className="landing-brain">
+            {BRAIN_LINES}
+          </svg>
+        </div>
         <div className="landing-title">
           <span className="lt-family">The Khoza Family's</span>
           <div><span className="lt-last">Last </span><span className="lt-brain">Brain</span></div>
