@@ -282,21 +282,39 @@ pointer-events:none;
 }
 `;
 
+const VOICE_ERR_MSG={
+"not-allowed":"Mic blocked — allow microphone access in your browser settings",
+"service-not-allowed":"Mic blocked by browser/OS settings",
+"no-speech":"Didn't catch that — try again",
+"audio-capture":"No microphone found on this device",
+"network":"Speech service needs an internet connection",
+"aborted":"",
+};
 function useVoice(onResult,onEnd){
 const recRef=useRef(null);
 const [listening,setListening]=useState(false);
+const [error,setError]=useState("");
 const start=useCallback(()=>{
+setError("");
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(!SR)return;
+if(!SR){setError("Mic not supported in this browser — try Chrome, Edge or Safari");return;}
 const r=new SR();
 r.lang="en-US";r.interimResults=true;r.maxAlternatives=1;
 r.onresult=(e)=>{const t=Array.from(e.results).map(r=>r[0].transcript).join("");onResult(t,e.results[e.results.length-1].isFinal);};
 r.onend=()=>{setListening(false);onEnd();};
-r.onerror=()=>{setListening(false);onEnd();};
-recRef.current=r;r.start();setListening(true);
+r.onerror=(e)=>{
+  const code=e&&e.error?e.error:"";
+  const msg=code in VOICE_ERR_MSG?VOICE_ERR_MSG[code]:(code?`Mic error: ${code}`:"Mic error");
+  if(msg)setError(msg);
+  setListening(false);onEnd();
+};
+recRef.current=r;
+try{r.start();setListening(true);}
+catch(err){setError(`Couldn't start mic: ${err&&err.message?err.message:"unknown error"}`);}
 },[onResult,onEnd]);
 const stop=useCallback(()=>{recRef.current?.stop();setListening(false);},[]);
-return{listening,start,stop};
+const clearError=useCallback(()=>setError(""),[]);
+return{listening,start,stop,error,clearError};
 }
 
 export default function App(){
@@ -853,6 +871,7 @@ return(
                       }
                     </div>
                     {inpErr&&<div className="t-err">{inpErr}</div>}
+                    {voice.error&&<div className="t-err" style={{color:"#ffb86b"}}>{voice.error}</div>}
 
                     {/* mic + type + submit row */}
                     <div style={{display:"flex",gap:8,alignItems:"center"}}>
@@ -861,7 +880,7 @@ return(
                       <button
                         onClick={()=>{
                           if(voice.listening){voice.stop();}
-                          else{setTranscript("");setInpErr("");voice.start();}
+                          else{setTranscript("");setInpErr("");voice.clearError();voice.start();}
                         }}
                         style={{
                           width:46,height:46,borderRadius:12,border:"none",flexShrink:0,cursor:"pointer",
@@ -877,7 +896,7 @@ return(
                       {/* type input — secondary */}
                       <input
                         value={transcript}
-                        onChange={e=>{setTranscript(e.target.value);setInpErr("");if(voice.listening)voice.stop();}}
+                        onChange={e=>{setTranscript(e.target.value);setInpErr("");voice.clearError();if(voice.listening)voice.stop();}}
                         onKeyDown={e=>e.key==="Enter"&&submit()}
                         placeholder="or type..."
                         style={{
