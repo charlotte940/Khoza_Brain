@@ -529,7 +529,7 @@ const val=(valOverride||transcript).trim();
 if(!val)return;
 const valid=getItems(category,letter);
 const match=valid.find(c=>c.toLowerCase()===val.toLowerCase());
-if(!match){setInpErr(`"${val}" — not valid for ${letter}`);setTimeout(()=>loseLife(curIdx,`"${val}" was not valid`),900);return;}
+if(!match){setInpErr(`"${val}" — not on our ${CAT_SINGULAR[category]||"word"} list starting with ${letter}`);setTimeout(()=>loseLife(curIdx,`"${val}" not on our ${CAT_SINGULAR[category]||"word"} list`),900);return;}
 if(used.includes(match)){setInpErr(`${match} already used!`);setTimeout(()=>loseLife(curIdx,`${match} already used`),900);return;}
 setFlash({[curIdx]:"ok"});setTimeout(()=>setFlash({}),550);
 setUsed(u=>[...u,match]);setRoundLog(r=>[...r,match]);
@@ -539,18 +539,15 @@ setTranscript("");setScreen("fact");
 
 function spinCategory(){
 if(spinning) return;
-const n=ALL_CATS.length;
-const pick=Math.floor(Math.random()*n);
-const sliceSize=360/n;
-const midOfPick=pick*sliceSize+sliceSize/2;        // degrees clockwise from top
-const targetMod=(360-midOfPick+360)%360;           // wheel rotation needed (mod 360)
-const currentMod=((spinAngle%360)+360)%360;
-const delta=(targetMod-currentMod+360)%360;
-const newAngle=spinAngle+delta+5*360;              // 5 full turns + land
 setSpinning(true);
-setSpinAngle(newAngle);
-clearTimeout(spinRef.current);
-spinRef.current=setTimeout(()=>{setCategory(ALL_CATS[pick]);setSpinning(false);},4200);
+let delay=60;
+const tick=()=>{
+  setCategory(ALL_CATS[Math.floor(Math.random()*ALL_CATS.length)]);
+  delay+=45;
+  if(delay<620){ spinRef.current=setTimeout(tick,delay); }
+  else { setSpinning(false); }
+};
+tick();
 }
 
 function afterFact(){
@@ -786,56 +783,46 @@ return(
           </div>
         </div>
         <div className="setup-card" style={{position:"relative",zIndex:1}}>
-          <div className="slbl">Category · Spin the wheel</div>
-          <div className="wheel-wrap">
-            <div className="wheel-stage">
-              <div className="wheel-rotor" style={{
-                transform:`rotate(${spinAngle}deg)`,
-                transition:spinning?"transform 4.2s cubic-bezier(.15,.7,.15,1)":"none",
-              }}>
-                <svg viewBox="-110 -110 220 220">
-                  {ALL_CATS.map((k,i)=>{
-                    const n=ALL_CATS.length;
-                    const r=100;
-                    const start=(i/n)*2*Math.PI-Math.PI/2;
-                    const end=((i+1)/n)*2*Math.PI-Math.PI/2;
-                    const x1=Math.cos(start)*r,y1=Math.sin(start)*r;
-                    const x2=Math.cos(end)*r,y2=Math.sin(end)*r;
-                    const midRad=(start+end)/2;
-                    const tx=Math.cos(midRad)*r*0.62,ty=Math.sin(midRad)*r*0.62;
-                    const midDeg=(i+0.5)*360/n;
-                    const large=(end-start)>Math.PI?1:0;
-                    const d=`M 0 0 L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
-                    const col=CATEGORIES[k].color;
-                    return(
-                      <g key={k} onClick={()=>!spinning&&setCategory(k)} style={{cursor:spinning?"default":"pointer"}}>
-                        <path d={d} fill={col} stroke="#fff" strokeWidth="1.5"/>
-                        <g transform={`translate(${tx} ${ty}) rotate(${midDeg})`} pointerEvents="none">
-                          <g transform="translate(0 -6)">{CAT_ICONS[k]}</g>
-                          <text y={12} textAnchor="middle" dominantBaseline="middle"
-                            style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:8,fill:"#fff",letterSpacing:.6,textTransform:"uppercase"}}
-                          >{CATEGORIES[k].label}</text>
-                        </g>
-                      </g>
-                    );
-                  })}
-                  {Array.from({length:16}).map((_,i)=>{
-                    const a=(i/16)*2*Math.PI;
-                    return <circle key={i} cx={Math.cos(a)*106} cy={Math.sin(a)*106} r="2.5" fill="#ffd84d"/>
-                  })}
-                  <circle cx="0" cy="0" r="108" fill="none" stroke="#ffb24d" strokeWidth="6"/>
-                </svg>
-              </div>
-              <div className="wheel-pointer"/>
-              <div className="wheel-hub">{BRAIN_SVG}</div>
-            </div>
-            <div className="wheel-picked" style={{color:CATEGORIES[category].color}}>
-              {CATEGORIES[category].label}
-            </div>
-            <button className="wheel-spin-btn" onClick={spinCategory} disabled={spinning}>
-              {spinning?"SPINNING...":"SPIN"}
-            </button>
+          <div className="slbl">Category</div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:10}}>
+            {ALL_CATS.map(k=>{
+              const col=CATEGORIES[k].color;
+              const sel=category===k;
+              return(
+                <button key={k} className="cat-pill"
+                  style={{
+                    display:"inline-flex",alignItems:"center",gap:6,
+                    borderColor:sel?col:"rgba(255,255,255,.1)",
+                    background:sel?col+"22":"transparent",
+                    color:sel?col:"rgba(255,255,255,.55)",
+                    transform:sel&&spinning?"scale(1.06)":"scale(1)",
+                    transition:"all .15s",
+                  }}
+                  onClick={()=>!spinning&&setCategory(k)}>
+                  <svg width="14" height="14" viewBox="-10 -10 20 20" style={{flexShrink:0}}>
+                    <g stroke={sel?col:"rgba(255,255,255,.55)"} fill={sel?col:"rgba(255,255,255,.55)"}>
+                      {CAT_ICONS[k]}
+                    </g>
+                  </svg>
+                  {CATEGORIES[k].label}
+                </button>
+              );
+            })}
           </div>
+          <button
+            onClick={spinCategory}
+            disabled={spinning}
+            style={{
+              width:"100%",marginBottom:18,padding:"14px 14px",borderRadius:12,
+              border:`1.5px solid ${CATEGORIES[category].color}80`,
+              background:`linear-gradient(135deg,${CATEGORIES[category].color}25,${CATEGORIES[category].color}08)`,
+              color:CATEGORIES[category].color,
+              fontFamily:"'Black Han Sans',sans-serif",fontSize:15,letterSpacing:3,
+              textTransform:"uppercase",cursor:spinning?"default":"pointer",
+              boxShadow:spinning?`0 0 24px ${CATEGORIES[category].color}80`:`0 0 10px ${CATEGORIES[category].color}30`,
+              transition:"all .2s",
+            }}
+          >{spinning?`Spinning — ${CATEGORIES[category].label}`:"Spin the Brain"}</button>
           <div className="slbl">Players · 2 to 8</div>
           <div style={{display:"flex",gap:8,marginBottom:14}}>
             <input className="inp" placeholder="Enter name..." value={newName}
@@ -1029,7 +1016,14 @@ return(
                           transition:"all .2s",
                           animation:voice.listening?"micPulse .8s ease-in-out infinite":"none",
                         }}
-                      >🎤</button>
+                      >
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                          <rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor"/>
+                          <path d="M6 11a6 6 0 0 0 12 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+                          <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                          <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                      </button>
 
                       {/* type input — secondary */}
                       <input
