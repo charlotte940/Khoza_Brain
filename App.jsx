@@ -51,8 +51,34 @@ const ALL_CATS=Object.keys(CATEGORIES);
 function getItems(cat,ltr){return CATEGORIES[cat]?.data[ltr]||[];}
 function getFactFor(cat,item){const f=CATEGORIES[cat]?.facts[item];if(f)return f[Math.floor(Math.random()*f.length)];return CATEGORIES[cat]?.defaultFact(item)||`${item} — great answer!`;}
 
-const TIMER_MAX=60;
+const TIMER_MAX=50;
+const fmtTime=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
 const PRE_TURN_SECS=5;
+
+// Custom SVG glyphs per category — drawn into slices so we don't rely on emoji.
+const CAT_ICONS={
+countries:<g fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"><circle cx="0" cy="0" r="7"/><ellipse cx="0" cy="0" rx="3" ry="7"/><line x1="-7" y1="0" x2="7" y2="0"/></g>,
+vegetables:<g><path d="M -3 -4 Q -1 -8 1 -5 Q 3 -8 4 -4 Q 6 -3 4 -1 L 2 6 Q 0 8 -2 6 L -4 -1 Q -6 -3 -3 -4 Z" fill="#fff"/><path d="M 0 -5 L 0 -8" stroke="#2e7d2e" strokeWidth="1.5" strokeLinecap="round"/></g>,
+fruits:<g><circle cx="0" cy="1" r="5.5" fill="#fff"/><path d="M 0 -4 Q 1 -7 3 -7" fill="none" stroke="#3aa23a" strokeWidth="1.6" strokeLinecap="round"/><path d="M 2 -5 Q 4 -4 5 -6" fill="#3aa23a" stroke="none"/></g>,
+colours:<g><circle cx="-3" cy="-1" r="2.6" fill="#ff4d6d"/><circle cx="3" cy="-1" r="2.6" fill="#00b7ff"/><circle cx="-2" cy="4" r="2.6" fill="#ffd32a"/><circle cx="3" cy="4" r="2.6" fill="#69ff47"/></g>,
+cars:<g fill="#fff"><rect x="-7" y="-1" width="14" height="5" rx="2"/><path d="M -5 -1 L -3 -5 L 3 -5 L 5 -1 Z"/><circle cx="-4" cy="5" r="2" fill="#222"/><circle cx="4" cy="5" r="2" fill="#222"/></g>,
+animals:<g fill="#fff"><ellipse cx="0" cy="3" rx="4" ry="3.2"/><circle cx="-4" cy="-2" r="1.8"/><circle cx="4" cy="-2" r="1.8"/><circle cx="-6" cy="1.5" r="1.5"/><circle cx="6" cy="1.5" r="1.5"/></g>,
+cities:<g fill="#fff"><rect x="-7" y="-2" width="3" height="9"/><rect x="-3" y="-6" width="3" height="13"/><rect x="1" y="-4" width="3" height="11"/><rect x="5" y="-1" width="2" height="8"/></g>,
+general:<g><text x="0" y="5" textAnchor="middle" fontSize="16" fontWeight="900" fill="#fff" fontFamily="'Black Han Sans',sans-serif">?</text></g>,
+};
+
+const BRAIN_SVG=(
+<svg viewBox="-12 -12 24 24">
+  <g fill="#ff7fa0" stroke="#6b1a2e" strokeWidth="1.2" strokeLinejoin="round">
+    <path d="M -1 -9 Q -7 -9 -8 -3 Q -11 -1 -9 3 Q -10 7 -5 8 Q -3 10 -1 8 Z"/>
+    <path d="M 1 -9 Q 7 -9 8 -3 Q 11 -1 9 3 Q 10 7 5 8 Q 3 10 1 8 Z"/>
+  </g>
+  <g fill="none" stroke="#6b1a2e" strokeWidth="0.8" strokeLinecap="round">
+    <path d="M -1 -6 Q -4 -5 -4 -2 Q -6 0 -4 2 Q -6 5 -3 6"/>
+    <path d="M 1 -6 Q 4 -5 4 -2 Q 6 0 4 2 Q 6 5 3 6"/>
+  </g>
+</svg>
+);
 const SLOT_COLORS=["#00e5ff","#ff4d6d","#69ff47","#bf5af2","#ff9f43","#ffd32a","#00cfff","#ff6eb4"];
 const SLOT_EMOJIS=["🦁","🐯","🦊","🐺","🦅","🐉","🦈","🦋"];
 
@@ -197,6 +223,20 @@ margin-bottom:5px;
 @keyframes spinRing{to{transform:rotate(360deg)}}
 .mic-icon{font-size:26px;position:relative;z-index:1;}
 .mic-label{font-family:'Black Han Sans',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+
+/* WHEEL */
+.wheel-wrap{display:flex;flex-direction:column;align-items:center;margin:6px 0 18px;}
+.wheel-stage{position:relative;width:280px;height:280px;}
+.wheel-rotor{width:100%;height:100%;filter:drop-shadow(0 10px 24px rgba(0,0,0,.55));}
+.wheel-rotor svg{width:100%;height:100%;display:block;}
+.wheel-pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:28px solid #ff4d6d;filter:drop-shadow(0 3px 4px rgba(0,0,0,.6));z-index:3;}
+.wheel-pointer::after{content:"";position:absolute;top:-30px;left:-6px;width:12px;height:12px;border-radius:50%;background:#ff4d6d;box-shadow:0 0 0 3px #fff;}
+.wheel-hub{position:absolute;top:50%;left:50%;width:66px;height:66px;border-radius:50%;transform:translate(-50%,-50%);background:radial-gradient(circle at 35% 30%,#ffe27a,#ff9a3c 60%,#d85a2b);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 4px #fff,0 6px 14px rgba(0,0,0,.45);z-index:2;}
+.wheel-hub svg{width:40px;height:40px;}
+.wheel-picked{margin-top:14px;font-family:'Black Han Sans',sans-serif;font-size:26px;letter-spacing:2px;text-transform:uppercase;text-align:center;}
+.wheel-spin-btn{margin-top:12px;padding:14px 44px;border-radius:999px;border:none;font-family:'Black Han Sans',sans-serif;font-size:22px;letter-spacing:4px;color:#fff;background:linear-gradient(135deg,#ff4d6d 0%,#ff9a3c 100%);box-shadow:0 6px 0 #b3233a,0 10px 20px rgba(0,0,0,.35);cursor:pointer;transition:transform .1s,box-shadow .1s;text-transform:uppercase;}
+.wheel-spin-btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 2px 0 #b3233a,0 6px 10px rgba(0,0,0,.3);}
+.wheel-spin-btn:disabled{opacity:.7;cursor:default;}
 
 /* TRANSCRIPT */
 .transcript-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;max-width:280px;}
@@ -357,6 +397,7 @@ const [pass,setPass]=useState(null);
 const [turnStarted,setTurnStarted]=useState(false);
 const [preCount,setPreCount]=useState(PRE_TURN_SECS);
 const [spinning,setSpinning]=useState(false);
+const [spinAngle,setSpinAngle]=useState(0);
 const spinRef=useRef(null);
 const [hallOfFame,setHallOfFame]=useState([]); // [{name,color,wins:[{date,category}]}]
 const [recTab,setRecTab]=useState("month"); // month | year | alltime
@@ -496,16 +537,18 @@ setTranscript("");setScreen("fact");
 
 function spinCategory(){
 if(spinning) return;
+const n=ALL_CATS.length;
+const pick=Math.floor(Math.random()*n);
+const sliceSize=360/n;
+const midOfPick=pick*sliceSize+sliceSize/2;        // degrees clockwise from top
+const targetMod=(360-midOfPick+360)%360;           // wheel rotation needed (mod 360)
+const currentMod=((spinAngle%360)+360)%360;
+const delta=(targetMod-currentMod+360)%360;
+const newAngle=spinAngle+delta+5*360;              // 5 full turns + land
 setSpinning(true);
-let delay=60;
-const tick=()=>{
-  const keys=ALL_CATS;
-  setCategory(keys[Math.floor(Math.random()*keys.length)]);
-  delay+=45;
-  if(delay<620){ spinRef.current=setTimeout(tick,delay); }
-  else { setSpinning(false); }
-};
-tick();
+setSpinAngle(newAngle);
+clearTimeout(spinRef.current);
+spinRef.current=setTimeout(()=>{setCategory(ALL_CATS[pick]);setSpinning(false);},4200);
 }
 
 function afterFact(){
@@ -741,28 +784,56 @@ return(
           </div>
         </div>
         <div className="setup-card" style={{position:"relative",zIndex:1}}>
-          <div className="slbl">Category</div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:10}}>
-            {ALL_CATS.map(k=>(
-              <button key={k} className="cat-pill"
-                style={{borderColor:category===k?CATEGORIES[k].color:"rgba(255,255,255,.1)",background:category===k?CATEGORIES[k].color+"15":"transparent",color:category===k?CATEGORIES[k].color:"rgba(255,255,255,.38)",transform:category===k&&spinning?"scale(1.06)":"scale(1)",transition:"all .15s"}}
-                onClick={()=>!spinning&&setCategory(k)}>{CATEGORIES[k].label}</button>
-            ))}
+          <div className="slbl">Category · Spin the wheel</div>
+          <div className="wheel-wrap">
+            <div className="wheel-stage">
+              <div className="wheel-rotor" style={{
+                transform:`rotate(${spinAngle}deg)`,
+                transition:spinning?"transform 4.2s cubic-bezier(.15,.7,.15,1)":"none",
+              }}>
+                <svg viewBox="-110 -110 220 220">
+                  {ALL_CATS.map((k,i)=>{
+                    const n=ALL_CATS.length;
+                    const r=100;
+                    const start=(i/n)*2*Math.PI-Math.PI/2;
+                    const end=((i+1)/n)*2*Math.PI-Math.PI/2;
+                    const x1=Math.cos(start)*r,y1=Math.sin(start)*r;
+                    const x2=Math.cos(end)*r,y2=Math.sin(end)*r;
+                    const midRad=(start+end)/2;
+                    const tx=Math.cos(midRad)*r*0.62,ty=Math.sin(midRad)*r*0.62;
+                    const midDeg=(i+0.5)*360/n;
+                    const large=(end-start)>Math.PI?1:0;
+                    const d=`M 0 0 L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`;
+                    const col=CATEGORIES[k].color;
+                    return(
+                      <g key={k} onClick={()=>!spinning&&setCategory(k)} style={{cursor:spinning?"default":"pointer"}}>
+                        <path d={d} fill={col} stroke="#fff" strokeWidth="1.5"/>
+                        <g transform={`translate(${tx} ${ty}) rotate(${midDeg})`} pointerEvents="none">
+                          <g transform="translate(0 -6)">{CAT_ICONS[k]}</g>
+                          <text y={12} textAnchor="middle" dominantBaseline="middle"
+                            style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:8,fill:"#fff",letterSpacing:.6,textTransform:"uppercase"}}
+                          >{CATEGORIES[k].label}</text>
+                        </g>
+                      </g>
+                    );
+                  })}
+                  {Array.from({length:16}).map((_,i)=>{
+                    const a=(i/16)*2*Math.PI;
+                    return <circle key={i} cx={Math.cos(a)*106} cy={Math.sin(a)*106} r="2.5" fill="#ffd84d"/>
+                  })}
+                  <circle cx="0" cy="0" r="108" fill="none" stroke="#ffb24d" strokeWidth="6"/>
+                </svg>
+              </div>
+              <div className="wheel-pointer"/>
+              <div className="wheel-hub">{BRAIN_SVG}</div>
+            </div>
+            <div className="wheel-picked" style={{color:CATEGORIES[category].color}}>
+              {CATEGORIES[category].label}
+            </div>
+            <button className="wheel-spin-btn" onClick={spinCategory} disabled={spinning}>
+              {spinning?"SPINNING...":"SPIN"}
+            </button>
           </div>
-          <button
-            onClick={spinCategory}
-            disabled={spinning}
-            style={{
-              width:"100%",marginBottom:18,padding:"12px 14px",borderRadius:12,
-              border:`1px solid ${CATEGORIES[category].color}60`,
-              background:`linear-gradient(135deg,${CATEGORIES[category].color}20,${CATEGORIES[category].color}08)`,
-              color:CATEGORIES[category].color,
-              fontFamily:"'Black Han Sans',sans-serif",fontSize:14,letterSpacing:2,
-              textTransform:"uppercase",cursor:spinning?"default":"pointer",
-              boxShadow:spinning?`0 0 20px ${CATEGORIES[category].color}60`:"none",
-              transition:"all .2s",
-            }}
-          >{spinning?`🎰 ${CATEGORIES[category].label}...`:"🎲 Spin to Choose"}</button>
           <div className="slbl">Players · 2 to 8</div>
           <div style={{display:"flex",gap:8,marginBottom:14}}>
             <input className="inp" placeholder="Enter name..." value={newName}
@@ -884,7 +955,7 @@ return(
                           color:tCol,letterSpacing:1,
                           textShadow:`0 0 12px ${tCol}`,
                           transition:"color .4s",
-                        }}>{timeLeft}s</span>
+                        }}>{fmtTime(timeLeft)}</span>
                         {/* tiny arc */}
                         <svg width="28" height="28" viewBox="0 0 28 28" style={{transform:"rotate(-90deg)",flexShrink:0}}>
                           <circle cx="14" cy="14" r="11" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="3"/>
@@ -971,7 +1042,7 @@ return(
                           fontFamily:"'DM Sans',sans-serif",fontSize:14,fontWeight:600,
                           outline:"none",letterSpacing:.3,
                         }}
-                        autoComplete="off" autoCorrect="off" spellCheck="false"
+                        autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} inputMode="text"
                       />
 
                       {/* submit */}
