@@ -528,7 +528,24 @@ stopTimer();voice.stop();
 const val=(valOverride||transcript).trim();
 if(!val)return;
 const valid=getItems(category,letter);
-const match=valid.find(c=>c.toLowerCase()===val.toLowerCase());
+const norm=s=>s.toLowerCase().trim().replace(/[.'’-]/g,"").replace(/\s+/g," ");
+const forms=s=>{
+  const n=norm(s);
+  const set=new Set([n]);
+  if(n.endsWith("ies")) set.add(n.slice(0,-3)+"y");
+  if(n.endsWith("es")) set.add(n.slice(0,-2));
+  if(n.endsWith("s")&&!n.endsWith("ss")) set.add(n.slice(0,-1));
+  if(/[^aeiou]y$/.test(n)) set.add(n.slice(0,-1)+"ies");
+  if(/(s|sh|ch|x|z)$/.test(n)) set.add(n+"es");
+  set.add(n+"s");
+  return set;
+};
+const valForms=forms(val);
+const match=valid.find(c=>{
+  const cForms=forms(c);
+  for(const f of valForms) if(cForms.has(f)) return true;
+  return false;
+});
 if(!match){setInpErr(`"${val}" — not on our ${CAT_SINGULAR[category]||"word"} list starting with ${letter}`);setTimeout(()=>loseLife(curIdx,`"${val}" not on our ${CAT_SINGULAR[category]||"word"} list`),900);return;}
 if(used.includes(match)){setInpErr(`${match} already used!`);setTimeout(()=>loseLife(curIdx,`${match} already used`),900);return;}
 setFlash({[curIdx]:"ok"});setTimeout(()=>setFlash({}),550);
