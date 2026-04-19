@@ -51,7 +51,8 @@ const ALL_CATS=Object.keys(CATEGORIES);
 function getItems(cat,ltr){return CATEGORIES[cat]?.data[ltr]||[];}
 function getFactFor(cat,item){const f=CATEGORIES[cat]?.facts[item];if(f)return f[Math.floor(Math.random()*f.length)];return CATEGORIES[cat]?.defaultFact(item)||`${item} — great answer!`;}
 
-const TIMER_MAX=30;
+const TIMER_MAX=60;
+const PRE_TURN_SECS=5;
 const SLOT_COLORS=["#00e5ff","#ff4d6d","#69ff47","#bf5af2","#ff9f43","#ffd32a","#00cfff","#ff6eb4"];
 const SLOT_EMOJIS=["🦁","🐯","🦊","🐺","🦅","🐉","🦈","🦋"];
 
@@ -354,6 +355,9 @@ const [brag,setBrag]=useState("");
 const [forfeit,setForfeit]=useState("");
 const [pass,setPass]=useState(null);
 const [turnStarted,setTurnStarted]=useState(false);
+const [preCount,setPreCount]=useState(PRE_TURN_SECS);
+const [spinning,setSpinning]=useState(false);
+const spinRef=useRef(null);
 const [hallOfFame,setHallOfFame]=useState([]); // [{name,color,wins:[{date,category}]}]
 const [recTab,setRecTab]=useState("month"); // month | year | alltime
 const voiceSupported=!!(window.SpeechRecognition||window.webkitSpeechRecognition);
@@ -414,11 +418,29 @@ if(screen==="game"){setTranscript("");setInpErr("");setTurnStarted(false);}
 return stopTimer;
 },[screen,curIdx]);
 
-// Start timer only when player taps start
+// Start timer only when the pre-turn countdown finishes (or a tap skips it)
 useEffect(()=>{
 if(screen==="game"&&turnStarted) startTimer();
 return stopTimer;
 },[turnStarted]);
+
+// Auto 5-second pre-turn countdown before each player's turn
+useEffect(()=>{
+if(screen!=="game"||turnStarted||players[curIdx]?.lives<=0) return;
+setPreCount(PRE_TURN_SECS);
+const id=setInterval(()=>{
+  setPreCount(c=>{
+    if(c<=1){
+      clearInterval(id);
+      setTurnStarted(true);
+      if(voiceSupported){setTimeout(()=>{setTranscript("");setInpErr("");voice.start();},150);}
+      return 0;
+    }
+    return c-1;
+  });
+},1000);
+return()=>clearInterval(id);
+},[screen,curIdx,turnStarted]);
 
 function loseLife(idx,reason){
 stopTimer();voice.stop();
@@ -470,6 +492,20 @@ setFlash({[curIdx]:"ok"});setTimeout(()=>setFlash({}),550);
 setUsed(u=>[...u,match]);setRoundLog(r=>[...r,match]);
 setFact({item:match,text:getFactFor(category,match),fromIdx:curIdx});
 setTranscript("");setScreen("fact");
+}
+
+function spinCategory(){
+if(spinning) return;
+setSpinning(true);
+let delay=60;
+const tick=()=>{
+  const keys=ALL_CATS;
+  setCategory(keys[Math.floor(Math.random()*keys.length)]);
+  delay+=45;
+  if(delay<620){ spinRef.current=setTimeout(tick,delay); }
+  else { setSpinning(false); }
+};
+tick();
 }
 
 function afterFact(){
@@ -706,13 +742,27 @@ return(
         </div>
         <div className="setup-card" style={{position:"relative",zIndex:1}}>
           <div className="slbl">Category</div>
-          <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:18}}>
+          <div style={{display:"flex",flexWrap:"wrap",gap:7,marginBottom:10}}>
             {ALL_CATS.map(k=>(
               <button key={k} className="cat-pill"
-                style={{borderColor:category===k?CATEGORIES[k].color:"rgba(255,255,255,.1)",background:category===k?CATEGORIES[k].color+"15":"transparent",color:category===k?CATEGORIES[k].color:"rgba(255,255,255,.38)"}}
-                onClick={()=>setCategory(k)}>{CATEGORIES[k].label}</button>
+                style={{borderColor:category===k?CATEGORIES[k].color:"rgba(255,255,255,.1)",background:category===k?CATEGORIES[k].color+"15":"transparent",color:category===k?CATEGORIES[k].color:"rgba(255,255,255,.38)",transform:category===k&&spinning?"scale(1.06)":"scale(1)",transition:"all .15s"}}
+                onClick={()=>!spinning&&setCategory(k)}>{CATEGORIES[k].label}</button>
             ))}
           </div>
+          <button
+            onClick={spinCategory}
+            disabled={spinning}
+            style={{
+              width:"100%",marginBottom:18,padding:"12px 14px",borderRadius:12,
+              border:`1px solid ${CATEGORIES[category].color}60`,
+              background:`linear-gradient(135deg,${CATEGORIES[category].color}20,${CATEGORIES[category].color}08)`,
+              color:CATEGORIES[category].color,
+              fontFamily:"'Black Han Sans',sans-serif",fontSize:14,letterSpacing:2,
+              textTransform:"uppercase",cursor:spinning?"default":"pointer",
+              boxShadow:spinning?`0 0 20px ${CATEGORIES[category].color}60`:"none",
+              transition:"all .2s",
+            }}
+          >{spinning?`🎰 ${CATEGORIES[category].label}...`:"🎲 Spin to Choose"}</button>
           <div className="slbl">Players · 2 to 8</div>
           <div style={{display:"flex",gap:8,marginBottom:14}}>
             <input className="inp" placeholder="Enter name..." value={newName}
@@ -797,29 +847,28 @@ return(
                         ))}
                       </div>
 
-                      {/* Start button */}
+                      {/* Auto-start countdown */}
+                      <div style={{
+                        marginTop:4,display:"flex",flexDirection:"column",alignItems:"center",gap:6,
+                      }}>
+                        <div style={{fontSize:10,letterSpacing:4,textTransform:"uppercase",color:"rgba(255,255,255,.4)",fontWeight:700}}>Starting in</div>
+                        <div style={{
+                          fontFamily:"'Black Han Sans',sans-serif",fontSize:72,lineHeight:1,
+                          color:p.color,textShadow:`0 0 24px ${p.color}80`,letterSpacing:1,
+                        }}>{preCount}</div>
+                      </div>
                       <button
                         onClick={()=>{
                           setTurnStarted(true);
-                          // auto-start mic if supported
-                          if(voiceSupported){
-                            setTimeout(()=>{setTranscript("");setInpErr("");voice.start();},200);
-                          }
+                          if(voiceSupported){setTimeout(()=>{setTranscript("");setInpErr("");voice.start();},200);}
                         }}
                         style={{
-                          padding:"16px 40px",borderRadius:14,border:"none",
-                          background:`linear-gradient(135deg,${p.color},${p.color}dd)`,
-                          color:"#000",
-                          fontFamily:"'Black Han Sans',sans-serif",fontSize:18,
-                          cursor:"pointer",letterSpacing:1,
-                          boxShadow:`0 0 32px ${p.color}60,0 4px 20px ${p.color}30`,
-                          transition:"all .2s",
-                          marginTop:4,
+                          padding:"10px 22px",borderRadius:10,border:`1px solid ${p.color}60`,
+                          background:"transparent",color:p.color,
+                          fontFamily:"'Black Han Sans',sans-serif",fontSize:12,letterSpacing:2,
+                          cursor:"pointer",textTransform:"uppercase",marginTop:2,
                         }}
-                      >Start My Turn →</button>
-                      <div style={{fontSize:10,letterSpacing:1,color:"rgba(255,255,255,.3)",fontWeight:500,fontStyle:"italic"}}>
-                        Timer starts when you tap
-                      </div>
+                      >Skip →</button>
                     </div>
                   ):(
                   <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}}>
