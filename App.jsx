@@ -63,29 +63,78 @@ const seatRotFor=(i,override)=>override!=null?override:(i%2===0?0:180);
 // Custom SVG glyphs per category — drawn into slices so we don't rely on emoji.
 const CAT_SINGULAR={countries:"country",vegetables:"vegetable",fruits:"fruit",colours:"colour",cars:"car brand",animals:"animal",cities:"city",general:"word"};
 
-const CAT_ICONS={
-countries:<g fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"><circle cx="0" cy="0" r="7"/><ellipse cx="0" cy="0" rx="3" ry="7"/><line x1="-7" y1="0" x2="7" y2="0"/></g>,
-vegetables:<g><path d="M -3 -4 Q -1 -8 1 -5 Q 3 -8 4 -4 Q 6 -3 4 -1 L 2 6 Q 0 8 -2 6 L -4 -1 Q -6 -3 -3 -4 Z" fill="#fff"/><path d="M 0 -5 L 0 -8" stroke="#2e7d2e" strokeWidth="1.5" strokeLinecap="round"/></g>,
-fruits:<g><circle cx="0" cy="1" r="5.5" fill="#fff"/><path d="M 0 -4 Q 1 -7 3 -7" fill="none" stroke="#3aa23a" strokeWidth="1.6" strokeLinecap="round"/><path d="M 2 -5 Q 4 -4 5 -6" fill="#3aa23a" stroke="none"/></g>,
-colours:<g><circle cx="-3" cy="-1" r="2.6" fill="#ff4d6d"/><circle cx="3" cy="-1" r="2.6" fill="#00b7ff"/><circle cx="-2" cy="4" r="2.6" fill="#ffd32a"/><circle cx="3" cy="4" r="2.6" fill="#69ff47"/></g>,
-cars:<g fill="#fff"><rect x="-7" y="-1" width="14" height="5" rx="2"/><path d="M -5 -1 L -3 -5 L 3 -5 L 5 -1 Z"/><circle cx="-4" cy="5" r="2" fill="#222"/><circle cx="4" cy="5" r="2" fill="#222"/></g>,
-animals:<g fill="#fff"><ellipse cx="0" cy="3" rx="4" ry="3.2"/><circle cx="-4" cy="-2" r="1.8"/><circle cx="4" cy="-2" r="1.8"/><circle cx="-6" cy="1.5" r="1.5"/><circle cx="6" cy="1.5" r="1.5"/></g>,
-cities:<g fill="#fff"><rect x="-7" y="-2" width="3" height="9"/><rect x="-3" y="-6" width="3" height="13"/><rect x="1" y="-4" width="3" height="11"/><rect x="5" y="-1" width="2" height="8"/></g>,
-general:<g><text x="0" y="5" textAnchor="middle" fontSize="16" fontWeight="900" fill="#fff" fontFamily="'Black Han Sans',sans-serif">?</text></g>,
-};
+// Personalized "brain-with-topper" icons — a brain silhouette plus a
+// category-specific element on top. Designed in a -14..14 viewBox.
 
-const BRAIN_SVG=(
-<svg viewBox="-12 -12 24 24">
-  <g fill="#ff7fa0" stroke="#6b1a2e" strokeWidth="1.2" strokeLinejoin="round">
-    <path d="M -1 -9 Q -7 -9 -8 -3 Q -11 -1 -9 3 Q -10 7 -5 8 Q -3 10 -1 8 Z"/>
-    <path d="M 1 -9 Q 7 -9 8 -3 Q 11 -1 9 3 Q 10 7 5 8 Q 3 10 1 8 Z"/>
-  </g>
-  <g fill="none" stroke="#6b1a2e" strokeWidth="0.8" strokeLinecap="round">
-    <path d="M -1 -6 Q -4 -5 -4 -2 Q -6 0 -4 2 Q -6 5 -3 6"/>
-    <path d="M 1 -6 Q 4 -5 4 -2 Q 6 0 4 2 Q 6 5 3 6"/>
-  </g>
-</svg>
+const BRAIN_BASE=(
+<g>
+  <path d="M -1 0 L -1 12 L -4 12 Q -11 12 -11 6 Q -12 0 -6 -1 Q -5 -3 -1 -2 Z" fill="#ecbcd8" stroke="#1a1a1a" strokeWidth="1" strokeLinejoin="round"/>
+  <path d="M 1 0 L 1 12 L 4 12 Q 11 12 11 6 Q 12 0 6 -1 Q 5 -3 1 -2 Z" fill="#9a4fbc" stroke="#1a1a1a" strokeWidth="1" strokeLinejoin="round"/>
+  <path d="M -5 4 Q -8 5 -6 9" fill="none" stroke="#1a1a1a" strokeWidth="0.6" strokeLinecap="round"/>
+  <path d="M 5 4 Q 8 5 6 9" fill="none" stroke="#1a1a1a" strokeWidth="0.6" strokeLinecap="round"/>
+</g>
 );
+
+const CAT_ICONS={
+countries:(<g>{BRAIN_BASE}
+  <circle cx="0" cy="-5" r="4" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.8"/>
+  <ellipse cx="0" cy="-5" rx="4" ry="1.4" fill="none" stroke="#1a1a1a" strokeWidth="0.5"/>
+  <path d="M 0 -9 L 0 -1" stroke="#1a1a1a" strokeWidth="0.5"/>
+  <circle cx="-1.5" cy="-8" r="1.3" fill="#1a1a1a"/>
+  <path d="M -1.5 -6.7 L -1.5 -5.5" stroke="#1a1a1a" strokeWidth="0.5" strokeLinecap="round"/>
+</g>),
+vegetables:(<g>{BRAIN_BASE}
+  <path d="M -1.5 -3 L 1.5 -3 L 0.8 -9 L -0.8 -9 Z" fill="#ff9a3c" stroke="#1a1a1a" strokeWidth="0.7"/>
+  <path d="M -1.5 -8 L -3 -11" stroke="#2e8b2e" strokeWidth="1.2" strokeLinecap="round"/>
+  <path d="M 0 -9 L 0 -12" stroke="#2e8b2e" strokeWidth="1.2" strokeLinecap="round"/>
+  <path d="M 1.5 -8 L 3 -11" stroke="#2e8b2e" strokeWidth="1.2" strokeLinecap="round"/>
+</g>),
+fruits:(<g>{BRAIN_BASE}
+  <circle cx="0" cy="-6" r="3.6" fill="#e63946" stroke="#1a1a1a" strokeWidth="0.8"/>
+  <path d="M 0 -9 Q 1.5 -11 3.5 -11" fill="none" stroke="#2e8b2e" strokeWidth="1" strokeLinecap="round"/>
+  <ellipse cx="3" cy="-10.5" rx="1.4" ry="0.8" fill="#2e8b2e" transform="rotate(-30 3 -10.5)"/>
+</g>),
+colours:(<g>{BRAIN_BASE}
+  <path d="M -5 -7 L 5 -7 L 5 -4.5 L -5 -4.5 Z" fill="#ffd84d" stroke="#1a1a1a" strokeWidth="0.7"/>
+  <rect x="-4.5" y="-7" width="2" height="2.5" fill="#ff4d6d"/>
+  <rect x="-2.3" y="-7" width="2" height="2.5" fill="#4a9eff"/>
+  <rect x="-0.1" y="-7" width="2" height="2.5" fill="#69ff47"/>
+  <rect x="2.1" y="-7" width="2" height="2.5" fill="#9a4fbc"/>
+  <path d="M 0 -7 L 0 -11" stroke="#8b5a3c" strokeWidth="1.4" strokeLinecap="round"/>
+  <path d="M -1 -11 Q 0 -12 1 -11" fill="#c9a37a" stroke="#1a1a1a" strokeWidth="0.5"/>
+</g>),
+cars:(<g>{BRAIN_BASE}
+  <path d="M -5 -4 L -3.5 -7 L 3.5 -7 L 5 -4 Z" fill="#ff4d6d" stroke="#1a1a1a" strokeWidth="0.7"/>
+  <rect x="-5.5" y="-4.5" width="11" height="2.8" rx="1" fill="#ff4d6d" stroke="#1a1a1a" strokeWidth="0.7"/>
+  <rect x="-3" y="-6.5" width="6" height="1.8" fill="#ffd84d"/>
+  <circle cx="-3.3" cy="-1.5" r="1.2" fill="#1a1a1a"/>
+  <circle cx="3.3" cy="-1.5" r="1.2" fill="#1a1a1a"/>
+</g>),
+animals:(<g>{BRAIN_BASE}
+  <circle cx="-3.5" cy="-5.5" r="1.5" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
+  <circle cx="-2.3" cy="-6.3" r="1.5" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
+  <rect x="-3.3" y="-5.8" width="6.6" height="1.6" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
+  <circle cx="3.3" cy="-5.5" r="1.5" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
+  <circle cx="2.2" cy="-6.3" r="1.5" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
+  <circle cx="-5" cy="7" r="1" fill="#1a1a1a"/>
+  <circle cx="5" cy="7" r="1" fill="#1a1a1a"/>
+</g>),
+cities:(<g>{BRAIN_BASE}
+  <rect x="-5" y="-5" width="2.2" height="2.5" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.5"/>
+  <rect x="-2.5" y="-8" width="2.2" height="5.5" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.5"/>
+  <rect x="0" y="-10" width="2.2" height="7.5" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.5"/>
+  <rect x="2.5" y="-7" width="2.2" height="4.5" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.5"/>
+  <path d="M 1 -10 L 1 -12" stroke="#1a1a1a" strokeWidth="0.6"/>
+</g>),
+general:(<g>{BRAIN_BASE}
+  <circle cx="0" cy="-7" r="2.8" fill="#ffd84d" stroke="#1a1a1a" strokeWidth="0.7"/>
+  <rect x="-1.3" y="-4.8" width="2.6" height="1.4" fill="#1a1a1a"/>
+  <path d="M -3 -11 L -4 -12" stroke="#ffd84d" strokeWidth="0.9" strokeLinecap="round"/>
+  <path d="M 0 -11 L 0 -12.5" stroke="#ffd84d" strokeWidth="0.9" strokeLinecap="round"/>
+  <path d="M 3 -11 L 4 -12" stroke="#ffd84d" strokeWidth="0.9" strokeLinecap="round"/>
+  <text x="5" y="-4" textAnchor="middle" fontSize="4.5" fontWeight="900" fill="#1a1a1a">?</text>
+</g>),
+};
 const SLOT_COLORS=["#00e5ff","#ff4d6d","#69ff47","#bf5af2","#ff9f43","#ffd32a","#00cfff","#ff6eb4"];
 const SLOT_EMOJIS=["🦁","🐯","🦊","🐺","🦅","🐉","🦈","🦋"];
 
@@ -828,10 +877,8 @@ return(
                     transition:"all .15s",
                   }}
                   onClick={()=>!spinning&&setCategory(k)}>
-                  <svg width="14" height="14" viewBox="-10 -10 20 20" style={{flexShrink:0}}>
-                    <g stroke={sel?col:"rgba(255,255,255,.55)"} fill={sel?col:"rgba(255,255,255,.55)"}>
-                      {CAT_ICONS[k]}
-                    </g>
+                  <svg width="28" height="28" viewBox="-14 -14 28 28" style={{flexShrink:0}}>
+                    {CAT_ICONS[k]}
                   </svg>
                   {CATEGORIES[k].label}
                 </button>
