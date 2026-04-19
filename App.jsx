@@ -47,6 +47,178 @@ defaultFact:(w)=>`${w} is a vibrant city with a unique history, culture and char
     defaultFact:(w)=>`${w} — great answer!`};
 })();
 
+// Extra specific facts merged into CATEGORIES so more answers get
+// a real brain fact instead of the generic fallback.
+const FACTS_EXTRA={
+countries:{
+"Indonesia":["Indonesia is made up of over 17,000 islands — more than any other country.","Indonesia has the largest Muslim population of any country on Earth."],
+"Mexico":["Mexico City is built on a drained lake and is sinking about 50cm per year.","Chocolate, corn and chillies were all first domesticated in Mexico."],
+"Vietnam":["Vietnam is the world's second-largest coffee exporter after Brazil.","Hanoi's Old Quarter has street names based on what was sold there 1,000 years ago."],
+"Thailand":["Thailand is the only Southeast Asian country never colonised by a European power.","Thailand's capital Bangkok has the longest city name in the world — 168 letters."],
+"Philippines":["The Philippines is made up of 7,641 islands.","The yo-yo was invented in the Philippines as a weapon, centuries before it became a toy."],
+"Argentina":["Argentina's Aconcagua is the highest peak outside Asia at 6,961 metres.","Argentines eat more beef per person than any other nation."],
+"Spain":["Spain has the second-highest number of UNESCO World Heritage sites — 49.","La Tomatina in Buñol is the world's largest food fight."],
+"Italy":["Italy has more UNESCO World Heritage sites than any other country — 58.","Italians invented the piano, the thermometer and the battery."],
+"Greece":["Greece has no point more than 137km from the sea.","The Greek national anthem has 158 verses."],
+"Poland":["Poland has the world's oldest still-operating salt mine — Wieliczka, since the 13th century.","The Polish language has seven grammatical cases."],
+"Morocco":["Morocco's Fes el Bali is the world's largest car-free urban area.","Morocco was the first country to recognise the United States, in 1777."],
+"Algeria":["Algeria is the largest country in Africa by area.","More than 80% of Algeria is covered by the Sahara Desert."],
+"Cuba":["Cuba has two currencies in circulation side-by-side.","Cuban doctors are deployed globally and medicine is one of its biggest exports."],
+"Netherlands":["A third of the Netherlands sits below sea level.","The Netherlands is the world's second-largest food exporter despite its small size."],
+"Norway":["Norway introduced salmon sushi to Japan in the 1980s.","The Svalbard Global Seed Vault in Norway protects the world's plant biodiversity."],
+"Sweden":["Sweden has 267,570 islands — the most of any country.","IKEA products are named after Swedish places, Swedish words and Scandinavian names."],
+"Switzerland":["Switzerland has four official languages: German, French, Italian and Romansh.","The Swiss eat more chocolate per person than any other country — 10kg a year."],
+"Portugal":["Portugal is the oldest country in Europe with the same defined borders since 1139.","Almost half the world's cork comes from Portugal."],
+"Ireland":["Ireland is the only country with a musical instrument (the harp) as its national symbol.","Saint Patrick, Ireland's patron saint, was actually British."],
+"New Zealand":["New Zealand has more sheep than people — about 5 to 1.","Mount Everest was first climbed by New Zealander Sir Edmund Hillary in 1953."],
+"Jamaica":["Jamaica was the first Caribbean nation to gain independence, in 1962.","Jamaica has produced more world-record sprinters per capita than anywhere else."],
+"Iran":["Iran is home to one of the world's oldest continuous civilisations — over 7,000 years.","Persian, not Arabic, is Iran's official language."],
+"Pakistan":["Pakistan has the world's second-highest mountain, K2, at 8,611 metres.","Pakistan made the world's first planned modern capital — Islamabad."],
+"Saudi Arabia":["Saudi Arabia has no rivers — it's the largest country in the world without one.","The Empty Quarter in Saudi Arabia is the largest continuous sand desert on Earth."],
+"Singapore":["Singapore is one of only three surviving city-states, alongside Monaco and Vatican City.","Chewing gum has been banned in Singapore since 1992."],
+"Ethiopia":["Ethiopia runs on its own 13-month calendar, about 7 years behind the Gregorian.","Coffee was first discovered in Ethiopia around the year 850."],
+"Tanzania":["Tanzania is home to Africa's highest mountain, Kilimanjaro (5,895m).","Swahili and English are both official languages of Tanzania."],
+"Uganda":["Uganda sits on the equator and has 11% of the world's bird species.","Lake Victoria, Africa's largest lake, is partly in Uganda."],
+"Ghana":["Ghana was the first sub-Saharan African country to gain independence, in 1957.","Ghana is the world's second-largest producer of cocoa."],
+"Senegal":["Senegal completely surrounds another country — The Gambia.","Dakar is the westernmost capital on mainland Africa."],
+"Mozambique":["Mozambique's flag is the only national flag with an AK-47 on it.","Portuguese is Mozambique's official language."],
+"Madagascar":["Madagascar split from the African continent around 165 million years ago.","About 90% of Madagascar's wildlife is found nowhere else on Earth."],
+"Chile":["Chile is the world's longest country from north to south — about 4,300km.","The Atacama Desert in Chile is the driest non-polar desert on Earth."],
+"Colombia":["Colombia is the only South American country with coastlines on both the Pacific and the Caribbean.","Colombia produces the most emeralds of any country."],
+"Peru":["Peru is home to Machu Picchu, built by the Inca around 1450.","Peru has more than 3,000 varieties of potato."],
+"Venezuela":["Venezuela's Angel Falls is the world's highest uninterrupted waterfall — 979m.","Venezuela has the world's largest proven oil reserves."],
+"Botswana":["Botswana is home to the Okavango Delta — a UNESCO site and wildlife wonder.","Diamonds make up more than 80% of Botswana's exports."],
+"Namibia":["Namibia's Sossusvlei dunes are among the tallest in the world, up to 325m.","Namibia was the first country to write environmental protection into its constitution."],
+"Lesotho":["Lesotho is completely surrounded by South Africa — a country within a country.","Lesotho's lowest point (1,400m) is higher than many countries' highest."],
+"Eswatini":["Eswatini (formerly Swaziland) is Africa's last absolute monarchy.","Eswatini's Sibebe Rock is the world's largest exposed granite dome."],
+},
+cities:{
+"Johannesburg":["Johannesburg was built on the world's largest gold deposit.","Johannesburg is known as eGoli — 'City of Gold' — in Zulu."],
+"Durban":["Durban has the largest port in Africa and the largest Indian population outside of India.","Durban's beaches are protected by the world's longest shark net."],
+"Pretoria":["Pretoria is one of South Africa's three capitals (executive).","Pretoria is nicknamed the Jacaranda City for its 70,000 purple trees."],
+"Mumbai":["Mumbai produces more films per year than any other city — over 1,000.","Mumbai's Dharavi is one of Asia's largest slums but also one of its busiest economies."],
+"Delhi":["Delhi has been continuously inhabited for over 2,500 years.","Delhi's metro is the world's 12th-largest rapid transit system."],
+"Los Angeles":["Los Angeles means 'The Angels' in Spanish.","LA has the largest population of Mexicans outside of Mexico."],
+"Chicago":["Chicago's river is dyed green every St Patrick's Day since 1962.","The skyscraper was invented in Chicago in 1885."],
+"Miami":["Miami is the only major US city founded by a woman — Julia Tuttle.","More than half of Miami's residents speak Spanish at home."],
+"Barcelona":["Barcelona's Sagrada Família has been under construction since 1882.","FC Barcelona's motto is 'Més que un club' — 'More than a club'."],
+"Madrid":["Madrid has the world's oldest restaurant still operating — Botín, 1725.","Madrid sits at 667m, making it the highest capital in Europe."],
+"Moscow":["Moscow has the deepest subway stations in the world — some over 80m deep.","The Kremlin has 20 towers around its walls."],
+"Rome":["Rome has been continuously inhabited for nearly 3,000 years.","The Colosseum could hold 50,000 spectators for ancient games."],
+"Athens":["Athens has been inhabited for over 7,000 years — one of the oldest cities on Earth.","Democracy was invented in Athens around 508 BC."],
+"Berlin":["Berlin is nine times the size of Paris with only double the population.","Berlin had over 1,000 bridges — more than Venice."],
+"Amsterdam":["Amsterdam has more bicycles than residents — about 1.2 per person.","Amsterdam is built on 11 million wooden poles driven into soft soil."],
+"Vienna":["Vienna was voted the world's most liveable city multiple times.","Vienna's main sewer was the setting for the finale of 'The Third Man'."],
+"Prague":["Prague's astronomical clock from 1410 is the world's oldest still working.","Prague Castle is the largest ancient castle complex in the world."],
+"Bangkok":["Bangkok's full ceremonial name is 168 characters — the world's longest city name.","Bangkok has more 7-Eleven stores than any other city."],
+"Seoul":["Seoul has the fastest internet speeds of any major city.","Half of South Korea's population lives in the Seoul metropolitan area."],
+"Shanghai":["Shanghai has the world's fastest train in commercial service — the Maglev.","Shanghai Port is the busiest container port on Earth."],
+"Hong Kong":["Hong Kong has more skyscrapers than any other city — over 300.","Hong Kong's Victoria Peak tram has run continuously since 1888."],
+"Beijing":["Beijing's Forbidden City has 9,999 rooms.","Beijing hosted both Summer and Winter Olympics — the only city to do so."],
+"Rio de Janeiro":["Rio's Christ the Redeemer is one of the New Seven Wonders of the World.","Rio's Carnival is the largest carnival on Earth — 2 million people a day."],
+"Cairo":["Cairo is the largest city in the Arab world.","Cairo's metro is Africa's oldest — running since 1987."],
+"Nairobi":["Nairobi is the only capital city with a national park inside its limits.","Nairobi comes from the Maasai phrase Enkare Nyrobi — 'place of cool waters'."],
+"Addis Ababa":["Addis Ababa is the highest capital in Africa at 2,355m.","It's the headquarters of the African Union — the political capital of the continent."],
+"Lagos":["Lagos is Africa's largest city by population — up to 24 million people.","Lagos has the third-largest film industry in the world — Nollywood."],
+},
+animals:{
+"Shark":["A great white shark can detect a drop of blood in 100 litres of water.","Sharks have existed for over 400 million years — older than trees."],
+"Tiger":["A tiger's roar can be heard up to 3km away.","Each tiger's stripes are unique — like a human fingerprint."],
+"Zebra":["Each zebra's stripes are unique.","Zebra foals can stand within 20 minutes of birth and run within an hour."],
+"Rhino":["White and black rhinos are actually the same colour — grey.","A rhino's horn is made of keratin — the same material as our fingernails."],
+"Gorilla":["Gorillas share 98% of their DNA with humans.","A silverback gorilla is up to six times stronger than an adult human."],
+"Panda":["Giant pandas eat bamboo for up to 14 hours a day.","All giant pandas in zoos worldwide are technically on loan from China."],
+"Koala":["Koalas sleep up to 22 hours a day.","A koala's fingerprints are nearly identical to a human's."],
+"Horse":["Horses can sleep both lying down and standing up.","A horse's eyes are among the largest of any land mammal."],
+"Owl":["Owls can rotate their heads up to 270 degrees.","The smallest owl, the Elf Owl, is only 13cm tall."],
+"Crocodile":["Crocodiles have been around for over 200 million years.","A saltwater crocodile has the strongest bite ever measured in an animal."],
+"Bear":["A polar bear's skin is black, not white.","Bears can smell prey over 30km away."],
+"Fox":["Foxes use Earth's magnetic field to hunt — tilting their heads to find prey.","Arctic foxes' fur changes from white in winter to brown in summer."],
+"Wolf":["A single wolf howl can be heard up to 10km away.","Wolves mate for life in most packs."],
+"Eagle":["A bald eagle's nest can weigh over a tonne.","Eagles can see prey from over 3km away."],
+"Frog":["A frog's skin can absorb water, so they don't need to drink.","The golden poison frog has enough venom to kill 10 adult humans."],
+"Hippopotamus":["Hippos can run 30km/h despite weighing up to 1,500kg.","Hippo sweat is red — a natural sunscreen."],
+"Lion":["A lion's roar can be heard up to 8km away.","Lions can sleep up to 20 hours a day."],
+"Monkey":["Some monkeys use stone tools — a 'monkey stone age' has lasted at least 3,000 years.","There are over 260 species of monkey worldwide."],
+},
+fruits:{
+"Pineapple":["It takes about 3 years for one pineapple to grow.","The enzyme bromelain in pineapple can break down protein — including meat."],
+"Orange":["Oranges are a hybrid of pomelos and mandarins, cultivated in Asia 4,000+ years ago.","Brazil produces about a third of the world's oranges."],
+"Grape":["There are more than 10,000 varieties of grape worldwide.","Concord grapes appear purple because of light reflection — they're technically blue-black."],
+"Peach":["Peaches originated in China over 4,000 years ago.","Peaches are part of the rose family — alongside apples and cherries."],
+"Cherry":["One cherry tree can produce fruit for 100 years.","Washington State grows more sweet cherries than any other US region."],
+"Mango":["India grows half the world's mangoes.","Mangoes have been cultivated for over 4,000 years."],
+"Papaya":["Papaya leaves are used to tenderise meat — they contain the enzyme papain.","Papaya trees produce fruit within a year of planting."],
+},
+vegetables:{
+"Carrot":["Carrots were originally purple and yellow — orange carrots were bred in the Netherlands.","Eating too many carrots can actually turn your skin orange — a condition called carotenemia."],
+"Cabbage":["Cabbage is over 90% water.","Cabbage was a staple food aboard British Royal Navy ships to prevent scurvy."],
+"Celery":["Celery has negative calories — you burn more digesting it than it contains.","Ancient Greeks awarded celery wreaths to Olympic victors."],
+"Lettuce":["Lettuce is the world's second-most popular salad vegetable after tomato.","A lactuca molecule in lettuce can make you sleepy."],
+"Asparagus":["Asparagus can grow up to 25cm in a single day.","Asparagus was eaten by the ancient Egyptians over 5,000 years ago."],
+"Beetroot":["Beetroot juice lowers blood pressure within hours.","Beetroot was used to tint lipsticks and cheeks long before modern cosmetics."],
+},
+colours:{
+"Yellow":["Yellow is the most visible colour from a distance — which is why school buses are yellow.","The first colour a newborn sees distinctly is red, not yellow."],
+"Brown":["Brown is not on the visible light spectrum — your brain constructs it from dark orange.","The brown colour of chocolate comes from cocoa mass and roasting."],
+"Grey":["Grey literally means the colour between black and white.","The human eye can distinguish about 500 shades of grey."],
+"Violet":["Violet is the highest-frequency colour the human eye can see.","Violet and purple are not the same — violet is a true spectrum colour; purple is a mix."],
+"Maroon":["Maroon comes from the French word marron, meaning chestnut.","Maroon was one of the earliest clothing dyes, made from madder root."],
+"Navy":["Navy blue takes its name from the uniforms of the British Royal Navy, adopted in 1748.","Before 1748, navy was called marine blue."],
+"Beige":["Beige comes from the French word for natural, undyed wool.","Beige gained popularity in fashion after World War I."],
+"Cyan":["Cyan is one of the four ink colours used in most printers — CMYK.","The word cyan comes from the Greek kyanos — 'dark blue'."],
+},
+cars:{
+"Hyundai":["Hyundai means 'modernity' in Korean.","Hyundai's home city of Ulsan has the world's largest car factory by output."],
+"Kia":["Kia's name comes from Chinese characters meaning 'to rise out of Asia'.","Kia started making bicycle parts in 1944 before building cars."],
+"Nissan":["Nissan introduced the world's best-selling electric car — the Leaf — in 2010.","Nissan's Z sports cars have been in continuous production since 1969."],
+"Mazda":["Mazda is the only major car maker still using rotary engines in production cars.","The name Mazda comes from Ahura Mazda, the Zoroastrian god of light."],
+"Subaru":["Subaru's star logo represents the Pleiades cluster — and the six companies that merged to form Subaru.","Subaru Outback models outsell in Vermont, USA, more than any state."],
+"Jaguar":["Jaguar started life making sidecars for motorbikes in 1922.","Jaguar's E-Type was called 'the most beautiful car ever made' by Enzo Ferrari."],
+"Volvo":["Volvo invented the 3-point seatbelt in 1959 and gave away the patent to save lives.","Volvo means 'I roll' in Latin."],
+"Audi":["Audi's four rings represent the four companies that merged in 1932 to form Auto Union.","The name Audi is Latin for the founder's German surname Horch — 'listen'."],
+"Mini":["The Mini was designed in 1959 to be fuel-efficient during the Suez crisis.","Mini Coopers starred as the getaway cars in The Italian Job (1969)."],
+"Dodge":["Dodge was founded by two brothers who supplied parts to Ford before making their own cars.","The Dodge Viper had a 8.0-litre V10 — originally designed for trucks."],
+"Renault":["Renault invented the first drum brake in 1902.","Renault owns Dacia, Alpine and a major stake in Nissan."],
+},
+};
+(function mergeExtras(){
+for(const cat of Object.keys(FACTS_EXTRA)){
+  const c=CATEGORIES[cat];
+  if(!c) continue;
+  for(const [item,facts] of Object.entries(FACTS_EXTRA[cat])){
+    c.facts[item]=c.facts[item]?[...c.facts[item],...facts]:facts;
+  }
+}
+// re-merge into general since facts changed
+for(const cat of Object.keys(FACTS_EXTRA)){
+  const c=CATEGORIES[cat];
+  for(const [item,facts] of Object.entries(FACTS_EXTRA[cat])){
+    if(!CATEGORIES.general.facts[item]) CATEGORIES.general.facts[item]=facts;
+  }
+}
+})();
+
+// Varied default fact templates so unknown items still get something interesting.
+const DEFAULT_FACT_POOL={
+countries:[w=>`${w} has its own flag, anthem and language tradition stretching back generations.`,w=>`The name ${w} carries meaning in the language of its earliest peoples.`,w=>`${w} has its own cuisine, music and traditions distinct from its neighbours.`,w=>`Like every country, ${w} has a capital, a coastline or border, and a story older than its modern name.`],
+vegetables:[w=>`${w} is eaten in hundreds of dishes across dozens of cuisines.`,w=>`${w} has been cultivated by farmers for generations and is a staple in many diets.`,w=>`${w} contains vitamins, minerals and fibre the human body needs.`],
+fruits:[w=>`${w} ripens on trees, vines or bushes and is enjoyed fresh or cooked.`,w=>`${w} is packed with natural sugars and vitamins.`,w=>`${w} has been enjoyed by humans for thousands of years.`],
+colours:[w=>`${w} is one of the colours our eyes can distinguish thanks to millions of cone cells.`,w=>`${w} appears across nature, flags, art and fashion in countless shades.`,w=>`${w} has symbolic meaning in different cultures around the world.`],
+cars:[w=>`${w} designs engines, builds bodies and sells cars in dozens of countries.`,w=>`${w} has a distinctive badge, a home country and a specific place in motoring history.`,w=>`${w} vehicles have won races, set records or defined an era.`],
+animals:[w=>`${w} has evolved over millions of years to thrive in its habitat.`,w=>`${w} has unique senses, behaviours or features that help it survive.`,w=>`${w} plays a specific role in the ecosystem it calls home.`],
+cities:[w=>`${w} has its own skyline, markets and history woven into its streets.`,w=>`${w} is home to hundreds of thousands — or millions — of people from every walk of life.`,w=>`${w} has seen its share of history, trade and culture shape what it is today.`],
+general:[w=>`${w} — a great answer worth knowing more about!`],
+};
+function pickDefault(cat,w){
+  const pool=DEFAULT_FACT_POOL[cat]||DEFAULT_FACT_POOL.general;
+  return pool[Math.floor(Math.random()*pool.length)](w);
+}
+// Replace each category's defaultFact with the pool-backed version.
+for(const cat of Object.keys(CATEGORIES)){
+  CATEGORIES[cat].defaultFact=(w)=>pickDefault(cat,w);
+}
+
 const ALL_CATS=Object.keys(CATEGORIES);
 function getItems(cat,ltr){return CATEGORIES[cat]?.data[ltr]||[];}
 function getFactFor(cat,item){const f=CATEGORIES[cat]?.facts[item];if(f)return f[Math.floor(Math.random()*f.length)];return CATEGORIES[cat]?.defaultFact(item)||`${item} — great answer!`;}
@@ -58,76 +230,78 @@ const PRE_TURN_SECS=5;
 // Custom SVG glyphs per category — drawn into slices so we don't rely on emoji.
 const CAT_SINGULAR={countries:"country",vegetables:"vegetable",fruits:"fruit",colours:"colour",cars:"car brand",animals:"animal",cities:"city",general:"word"};
 
-// Personalized "brain-with-topper" icons — a brain silhouette plus a
-// category-specific element on top. Designed in a -14..14 viewBox.
+// Monochrome "brain-with-topper" icons. Everything uses currentColor
+// so the pill can tint the icon to match its category title.
 
-const BRAIN_BASE=(
-<g>
-  <path d="M -1 0 L -1 12 L -4 12 Q -11 12 -11 6 Q -12 0 -6 -1 Q -5 -3 -1 -2 Z" fill="#ecbcd8" stroke="#1a1a1a" strokeWidth="1" strokeLinejoin="round"/>
-  <path d="M 1 0 L 1 12 L 4 12 Q 11 12 11 6 Q 12 0 6 -1 Q 5 -3 1 -2 Z" fill="#9a4fbc" stroke="#1a1a1a" strokeWidth="1" strokeLinejoin="round"/>
-  <path d="M -5 4 Q -8 5 -6 9" fill="none" stroke="#1a1a1a" strokeWidth="0.6" strokeLinecap="round"/>
-  <path d="M 5 4 Q 8 5 6 9" fill="none" stroke="#1a1a1a" strokeWidth="0.6" strokeLinecap="round"/>
+const BRAIN_LINES=(
+<g fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">
+  <path d="M -1 0 L -1 11 L -4 11 Q -10 11 -10 6 Q -11 0 -6 -1 Q -5 -3 -1 -2"/>
+  <path d="M 1 0 L 1 11 L 4 11 Q 10 11 10 6 Q 11 0 6 -1 Q 5 -3 1 -2"/>
+  <path d="M -4 4 Q -7 5 -5 8"/>
+  <path d="M 4 4 Q 7 5 5 8"/>
 </g>
 );
 
 const CAT_ICONS={
-countries:(<g>{BRAIN_BASE}
-  <circle cx="0" cy="-5" r="4" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.8"/>
-  <ellipse cx="0" cy="-5" rx="4" ry="1.4" fill="none" stroke="#1a1a1a" strokeWidth="0.5"/>
-  <path d="M 0 -9 L 0 -1" stroke="#1a1a1a" strokeWidth="0.5"/>
-  <circle cx="-1.5" cy="-8" r="1.3" fill="#1a1a1a"/>
-  <path d="M -1.5 -6.7 L -1.5 -5.5" stroke="#1a1a1a" strokeWidth="0.5" strokeLinecap="round"/>
+countries:(<g>{BRAIN_LINES}
+  <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+    <circle cx="0" cy="-6" r="4"/>
+    <ellipse cx="0" cy="-6" rx="4" ry="1.5"/>
+    <path d="M 0 -10 L 0 -2"/>
+  </g>
 </g>),
-vegetables:(<g>{BRAIN_BASE}
-  <path d="M -1.5 -3 L 1.5 -3 L 0.8 -9 L -0.8 -9 Z" fill="#ff9a3c" stroke="#1a1a1a" strokeWidth="0.7"/>
-  <path d="M -1.5 -8 L -3 -11" stroke="#2e8b2e" strokeWidth="1.2" strokeLinecap="round"/>
-  <path d="M 0 -9 L 0 -12" stroke="#2e8b2e" strokeWidth="1.2" strokeLinecap="round"/>
-  <path d="M 1.5 -8 L 3 -11" stroke="#2e8b2e" strokeWidth="1.2" strokeLinecap="round"/>
+vegetables:(<g>{BRAIN_LINES}
+  <path d="M -1.5 -3 L 1.5 -3 L 0.8 -9 L -0.8 -9 Z" fill="currentColor"/>
+  <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+    <path d="M -1.5 -8 L -3 -11"/>
+    <path d="M 0 -9 L 0 -12.5"/>
+    <path d="M 1.5 -8 L 3 -11"/>
+  </g>
 </g>),
-fruits:(<g>{BRAIN_BASE}
-  <circle cx="0" cy="-6" r="3.6" fill="#e63946" stroke="#1a1a1a" strokeWidth="0.8"/>
-  <path d="M 0 -9 Q 1.5 -11 3.5 -11" fill="none" stroke="#2e8b2e" strokeWidth="1" strokeLinecap="round"/>
-  <ellipse cx="3" cy="-10.5" rx="1.4" ry="0.8" fill="#2e8b2e" transform="rotate(-30 3 -10.5)"/>
+fruits:(<g>{BRAIN_LINES}
+  <circle cx="0" cy="-6" r="3.6" fill="currentColor"/>
+  <path d="M 0 -9 Q 2 -11 3.5 -11" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
 </g>),
-colours:(<g>{BRAIN_BASE}
-  <path d="M -5 -7 L 5 -7 L 5 -4.5 L -5 -4.5 Z" fill="#ffd84d" stroke="#1a1a1a" strokeWidth="0.7"/>
-  <rect x="-4.5" y="-7" width="2" height="2.5" fill="#ff4d6d"/>
-  <rect x="-2.3" y="-7" width="2" height="2.5" fill="#4a9eff"/>
-  <rect x="-0.1" y="-7" width="2" height="2.5" fill="#69ff47"/>
-  <rect x="2.1" y="-7" width="2" height="2.5" fill="#9a4fbc"/>
-  <path d="M 0 -7 L 0 -11" stroke="#8b5a3c" strokeWidth="1.4" strokeLinecap="round"/>
-  <path d="M -1 -11 Q 0 -12 1 -11" fill="#c9a37a" stroke="#1a1a1a" strokeWidth="0.5"/>
+colours:(<g>{BRAIN_LINES}
+  <rect x="-5" y="-7" width="10" height="2.8" rx="0.6" fill="currentColor"/>
+  <path d="M 0 -7 L 0 -11.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+  <circle cx="0" cy="-12" r="1.2" fill="currentColor"/>
 </g>),
-cars:(<g>{BRAIN_BASE}
-  <path d="M -5 -4 L -3.5 -7 L 3.5 -7 L 5 -4 Z" fill="#ff4d6d" stroke="#1a1a1a" strokeWidth="0.7"/>
-  <rect x="-5.5" y="-4.5" width="11" height="2.8" rx="1" fill="#ff4d6d" stroke="#1a1a1a" strokeWidth="0.7"/>
-  <rect x="-3" y="-6.5" width="6" height="1.8" fill="#ffd84d"/>
-  <circle cx="-3.3" cy="-1.5" r="1.2" fill="#1a1a1a"/>
-  <circle cx="3.3" cy="-1.5" r="1.2" fill="#1a1a1a"/>
+cars:(<g>{BRAIN_LINES}
+  <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round">
+    <path d="M -5 -4 L -3.5 -7 L 3.5 -7 L 5 -4 L -5 -4 Z"/>
+    <rect x="-6" y="-4.5" width="12" height="3" rx="1"/>
+    <circle cx="-3.5" cy="-0.5" r="1.3"/>
+    <circle cx="3.5" cy="-0.5" r="1.3"/>
+  </g>
 </g>),
-animals:(<g>{BRAIN_BASE}
-  <circle cx="-3.5" cy="-5.5" r="1.5" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
-  <circle cx="-2.3" cy="-6.3" r="1.5" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
-  <rect x="-3.3" y="-5.8" width="6.6" height="1.6" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
-  <circle cx="3.3" cy="-5.5" r="1.5" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
-  <circle cx="2.2" cy="-6.3" r="1.5" fill="#fff" stroke="#1a1a1a" strokeWidth="0.6"/>
-  <circle cx="-5" cy="7" r="1" fill="#1a1a1a"/>
-  <circle cx="5" cy="7" r="1" fill="#1a1a1a"/>
+animals:(<g>{BRAIN_LINES}
+  <g fill="currentColor">
+    <circle cx="-3.3" cy="-5.5" r="1.3"/>
+    <circle cx="-1.8" cy="-7" r="1.3"/>
+    <circle cx="1.8" cy="-7" r="1.3"/>
+    <circle cx="3.3" cy="-5.5" r="1.3"/>
+    <path d="M -3 -5 Q 0 -3 3 -5 Q 1.5 -1.5 0 -1.5 Q -1.5 -1.5 -3 -5 Z"/>
+  </g>
 </g>),
-cities:(<g>{BRAIN_BASE}
-  <rect x="-5" y="-5" width="2.2" height="2.5" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.5"/>
-  <rect x="-2.5" y="-8" width="2.2" height="5.5" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.5"/>
-  <rect x="0" y="-10" width="2.2" height="7.5" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.5"/>
-  <rect x="2.5" y="-7" width="2.2" height="4.5" fill="#4a9eff" stroke="#1a1a1a" strokeWidth="0.5"/>
-  <path d="M 1 -10 L 1 -12" stroke="#1a1a1a" strokeWidth="0.6"/>
+cities:(<g>{BRAIN_LINES}
+  <g fill="currentColor">
+    <rect x="-6" y="-5" width="2.5" height="3"/>
+    <rect x="-3" y="-9" width="2.5" height="7"/>
+    <rect x="0.2" y="-11" width="2.5" height="9"/>
+    <rect x="3.4" y="-7" width="2.5" height="5"/>
+  </g>
+  <path d="M 1.4 -11 L 1.4 -13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
 </g>),
-general:(<g>{BRAIN_BASE}
-  <circle cx="0" cy="-7" r="2.8" fill="#ffd84d" stroke="#1a1a1a" strokeWidth="0.7"/>
-  <rect x="-1.3" y="-4.8" width="2.6" height="1.4" fill="#1a1a1a"/>
-  <path d="M -3 -11 L -4 -12" stroke="#ffd84d" strokeWidth="0.9" strokeLinecap="round"/>
-  <path d="M 0 -11 L 0 -12.5" stroke="#ffd84d" strokeWidth="0.9" strokeLinecap="round"/>
-  <path d="M 3 -11 L 4 -12" stroke="#ffd84d" strokeWidth="0.9" strokeLinecap="round"/>
-  <text x="5" y="-4" textAnchor="middle" fontSize="4.5" fontWeight="900" fill="#1a1a1a">?</text>
+general:(<g>{BRAIN_LINES}
+  <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+    <circle cx="0" cy="-8" r="3"/>
+    <path d="M -1.4 -5 L 1.4 -5"/>
+    <path d="M -1 -3.6 L 1 -3.6"/>
+    <path d="M -4.5 -12 L -6 -13"/>
+    <path d="M 0 -12 L 0 -13.8"/>
+    <path d="M 4.5 -12 L 6 -13"/>
+  </g>
 </g>),
 };
 const SLOT_COLORS=["#00e5ff","#ff4d6d","#69ff47","#bf5af2","#ff9f43","#ffd32a","#00cfff","#ff6eb4"];
@@ -914,15 +1088,16 @@ return(
               return(
                 <button key={k} className="cat-pill"
                   style={{
-                    display:"inline-flex",alignItems:"center",gap:6,
-                    borderColor:sel?col:"rgba(255,255,255,.1)",
+                    display:"inline-flex",alignItems:"center",gap:8,
+                    borderColor:sel?col:col+"50",
                     background:sel?col+"22":"transparent",
-                    color:sel?col:"rgba(255,255,255,.55)",
+                    color:col,
+                    opacity:sel?1:.85,
                     transform:sel&&spinning?"scale(1.06)":"scale(1)",
                     transition:"all .15s",
                   }}
                   onClick={()=>!spinning&&setCategory(k)}>
-                  <svg width="28" height="28" viewBox="-14 -14 28 28" style={{flexShrink:0}}>
+                  <svg width="32" height="32" viewBox="-14 -14 28 28" style={{flexShrink:0}}>
                     {CAT_ICONS[k]}
                   </svg>
                   {CATEGORIES[k].label}
