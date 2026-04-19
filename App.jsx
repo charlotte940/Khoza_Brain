@@ -55,6 +55,11 @@ const TIMER_MAX=50;
 const fmtTime=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
 const PRE_TURN_SECS=5;
 
+// Shared-device seat rotation: alternate 0/180 so players facing each
+// other around the iPad each see their own section upright. Each
+// player can override with their flip button.
+const seatRotFor=(i,override)=>override!=null?override:(i%2===0?0:180);
+
 // Custom SVG glyphs per category — drawn into slices so we don't rely on emoji.
 const CAT_SINGULAR={countries:"country",vegetables:"vegetable",fruits:"fruit",colours:"colour",cars:"car brand",animals:"animal",cities:"city",general:"word"};
 
@@ -342,37 +347,44 @@ pointer-events:none;
 `;
 
 const VOICE_ERR_MSG={
-"not-allowed":"Mic blocked — allow microphone access in your browser settings",
-"service-not-allowed":"Mic blocked by browser/OS settings",
-"no-speech":"Didn't catch that — try again",
-"audio-capture":"No microphone found on this device",
-"network":"Speech service needs an internet connection",
-"aborted":"",
+"not-allowed":{msg:"Mic is blocked",howto:[
+  "iPhone/iPad Safari: tap the \u201CaA\u201D in the URL bar \u2192 Website Settings \u2192 Microphone \u2192 Allow",
+  "Chrome/Edge: tap the lock icon in the URL bar \u2192 Microphone \u2192 Allow, then reload",
+  "Only one person needs to do this \u2014 everyone passing the device shares the permission.",
+]},
+"service-not-allowed":{msg:"Mic blocked by browser or OS",howto:[
+  "iPad/iPhone: Settings \u2192 Safari \u2192 Microphone \u2192 Allow",
+  "Mac: System Settings \u2192 Privacy & Security \u2192 Microphone \u2192 enable for your browser",
+]},
+"no-speech":{msg:"Didn\u2019t catch that \u2014 try again"},
+"audio-capture":{msg:"No microphone found on this device"},
+"network":{msg:"Speech service needs an internet connection"},
+"aborted":{msg:""},
 };
 function useVoice(onResult,onEnd){
 const recRef=useRef(null);
 const [listening,setListening]=useState(false);
-const [error,setError]=useState("");
+const [error,setError]=useState(null);
 const start=useCallback(()=>{
-setError("");
+setError(null);
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-if(!SR){setError("Mic not supported in this browser — try Chrome, Edge or Safari");return;}
+if(!SR){setError({msg:"Mic not supported in this browser \u2014 try Chrome, Edge or Safari"});return;}
 const r=new SR();
 r.lang=(navigator.language||"en-US");r.interimResults=true;r.maxAlternatives=3;
 r.onresult=(e)=>{const t=Array.from(e.results).map(r=>r[0].transcript).join("");onResult(t,e.results[e.results.length-1].isFinal);};
 r.onend=()=>{setListening(false);onEnd();};
 r.onerror=(e)=>{
   const code=e&&e.error?e.error:"";
-  const msg=code in VOICE_ERR_MSG?VOICE_ERR_MSG[code]:(code?`Mic error: ${code}`:"Mic error");
-  if(msg)setError(msg);
+  const entry=code in VOICE_ERR_MSG?VOICE_ERR_MSG[code]:{msg:code?`Mic error: ${code}`:"Mic error"};
+  if(entry.msg)setError(entry);
   setListening(false);onEnd();
 };
 recRef.current=r;
 try{r.start();setListening(true);}
-catch(err){setError(`Couldn't start mic: ${err&&err.message?err.message:"unknown error"}`);}
+catch(err){setError({msg:`Couldn't start mic: ${err&&err.message?err.message:"unknown error"}`});}
 },[onResult,onEnd]);
 const stop=useCallback(()=>{recRef.current?.stop();setListening(false);},[]);
-const clearError=useCallback(()=>setError(""),[]);
+const clearError=useCallback(()=>setError(null),[]);
 return{listening,start,stop,error,clearError};
 }
 
@@ -577,7 +589,7 @@ setScreen("game");setCurIdx(next);setTimeout(()=>setPass(null),1600);
 function addPlayer(){
 if(!newName.trim()||players.length>=8)return;
 const i=players.length;
-setPlayers([...players,{name:newName.trim(),lives,emoji:SLOT_EMOJIS[i],color:SLOT_COLORS[i],id:Date.now()}]);
+setPlayers([...players,{name:newName.trim(),lives,emoji:SLOT_EMOJIS[i],color:SLOT_COLORS[i],id:Date.now(),rot:null}]);
 setNewName("");
 }
 
@@ -896,11 +908,20 @@ return(
               :isNextUp
                 ?`linear-gradient(160deg,${p.color}14,${p.color}06)`
                 :`linear-gradient(160deg,${p.color}07,${p.color}02)`;
+          const rot=seatRotFor(i,p.rot);
           return(
             <div key={p.id} className={`pcard${isActive?" active":""}${isDead?" dead":""}${isNextUp?" next-up":""}${flashCls}`}
               style={{background:bg,boxShadow:isActive?`inset 0 0 0 1px ${p.color}35`:isNextUp?`inset 6px 0 0 -2px ${p.color}`:`inset 0 0 0 1px rgba(255,255,255,.04)`}}>
               <div className="pcard-sep"/>
-              <div className="pcard-content">
+              <button onClick={()=>setPlayers(ps=>ps.map((x,j)=>j===i?{...x,rot:(seatRotFor(j,x.rot)+180)%360}:x))}
+                title="Flip to face my seat"
+                style={{position:"absolute",top:8,right:10,width:34,height:34,borderRadius:10,border:"none",background:"rgba(255,255,255,.06)",color:"rgba(255,255,255,.55)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",zIndex:2}}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8M3 8v0h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16M21 16v0h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <div className="pcard-content" style={{transform:`rotate(${rot}deg)`,transition:"transform .4s ease"}}>
                 {isDead?(
                   <div style={{display:"flex",alignItems:"center",gap:8}}>
                     <div style={{width:5,height:5,borderRadius:"50%",background:p.color,opacity:.25}}/>
@@ -1022,7 +1043,16 @@ return(
                       }
                     </div>
                     {inpErr&&<div className="t-err">{inpErr}</div>}
-                    {voice.error&&<div className="t-err" style={{color:"#ffb86b"}}>{voice.error}</div>}
+                    {voice.error&&voice.error.msg&&(
+                      <div style={{background:"rgba(255,184,107,.08)",border:"1px solid rgba(255,184,107,.3)",borderRadius:12,padding:"12px 14px",color:"#ffb86b",fontFamily:"'DM Sans',sans-serif",fontSize:14,fontWeight:600,lineHeight:1.4}}>
+                        <div style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:16,letterSpacing:.5,marginBottom:voice.error.howto?6:0}}>{voice.error.msg}</div>
+                        {voice.error.howto&&(
+                          <ul style={{margin:0,padding:"0 0 0 18px",fontSize:13,color:"rgba(255,208,150,.9)",fontWeight:500}}>
+                            {voice.error.howto.map((h,i)=><li key={i} style={{marginTop:3}}>{h}</li>)}
+                          </ul>
+                        )}
+                      </div>
+                    )}
 
                     {/* mic + type + submit row */}
                     <div style={{display:"flex",gap:12,alignItems:"center"}}>
