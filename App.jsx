@@ -31,6 +31,22 @@ facts:{"Tokyo":["Tokyo is the most populated metro area — over 37 million peop
 defaultFact:(w)=>`${w} is a vibrant city with a unique history, culture and character.`},
 };
 
+// General: a mixed category drawing from everything above.
+(function buildGeneral(){
+  const data={}, facts={};
+  for(const k of Object.keys(CATEGORIES)){
+    const c=CATEGORIES[k];
+    for(const [L,items] of Object.entries(c.data)){
+      if(!data[L]) data[L]=[];
+      for(const it of items) if(!data[L].includes(it)) data[L].push(it);
+    }
+    for(const [k2,v] of Object.entries(c.facts)) if(!facts[k2]) facts[k2]=v;
+  }
+  for(const L of Object.keys(data)) data[L].sort();
+  CATEGORIES.general={label:"General",emoji:"🧠",color:"#ff9ec4",data,facts,
+    defaultFact:(w)=>`${w} — great answer!`};
+})();
+
 const ALL_CATS=Object.keys(CATEGORIES);
 function getItems(cat,ltr){return CATEGORIES[cat]?.data[ltr]||[];}
 function getFactFor(cat,item){const f=CATEGORIES[cat]?.facts[item];if(f)return f[Math.floor(Math.random()*f.length)];return CATEGORIES[cat]?.defaultFact(item)||`${item} — great answer!`;}
@@ -189,8 +205,8 @@ margin-bottom:5px;
 .transcript-submit{flex-shrink:0;padding:8px 16px;border-radius:9px;border:none;font-family:'Black Han Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;letter-spacing:.5px;}
 .transcript-submit:disabled{opacity:.3;cursor:not-allowed;}
 .t-err{font-size:10px;color:#ff4d6d;font-weight:700;letter-spacing:.5px;text-align:center;}
-.used-strip{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:3px;padding:1px;scrollbar-width:none;max-width:260px;}
-.used-tag{flex-shrink:0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:2px 7px;font-size:9px;color:rgba(255,255,255,.38);font-weight:700;white-space:nowrap;}
+.used-strip{display:flex;flex-wrap:wrap;gap:6px;padding:2px 0;}
+.used-tag{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:6px 12px;font-size:14px;color:rgba(255,255,255,.85);font-weight:700;white-space:nowrap;}
 
 /* separator lines between cards */
 .pcard-sep{position:absolute;bottom:0;left:0;right:0;height:1px;background:rgba(255,255,255,.06);pointer-events:none;}
@@ -299,7 +315,7 @@ setError("");
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 if(!SR){setError("Mic not supported in this browser — try Chrome, Edge or Safari");return;}
 const r=new SR();
-r.lang="en-US";r.interimResults=true;r.maxAlternatives=1;
+r.lang=(navigator.language||"en-US");r.interimResults=true;r.maxAlternatives=3;
 r.onresult=(e)=>{const t=Array.from(e.results).map(r=>r[0].transcript).join("");onResult(t,e.results[e.results.length-1].isFinal);};
 r.onend=()=>{setListening(false);onEnd();};
 r.onerror=(e)=>{
