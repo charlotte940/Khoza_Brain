@@ -438,6 +438,7 @@ const [players,setPlayers]=useState([]);
 const [newName,setNewName]=useState("");
 const [lives,setLives]=useState(3);
 const [category,setCategory]=useState("countries");
+const [turnCategory,setTurnCategory]=useState("countries"); // wildcard resolves per-turn for "general"
 const [letter,setLetter]=useState("");
 const [curIdx,setCurIdx]=useState(0);
 const [used,setUsed]=useState([]);
@@ -523,6 +524,29 @@ if(screen==="game"&&turnStarted) startTimer();
 return stopTimer;
 },[turnStarted]);
 
+// On every turn start: resolve wildcard "general" to a real sub-category,
+// and auto-pick a new letter if the current one is exhausted.
+useEffect(()=>{
+if(screen!=="game") return;
+const realCats=ALL_CATS.filter(c=>c!=="general");
+const resolved=category==="general"
+  ?realCats[Math.floor(Math.random()*realCats.length)]
+  :category;
+setTurnCategory(resolved);
+const valid=getItems(resolved,letter);
+const allUsed=valid.length===0||valid.every(v=>used.includes(v));
+if(allUsed){
+  const catData=CATEGORIES[resolved].data;
+  const freshLetters=Object.keys(catData).filter(L=>catData[L].some(v=>!used.includes(v)));
+  if(freshLetters.length>0){
+    const newL=freshLetters[Math.floor(Math.random()*freshLetters.length)];
+    setLetter(newL);
+    setUsed([]);
+    setRoundLog([]);
+  }
+}
+},[screen,curIdx,category]);
+
 // Auto 5-second pre-turn countdown before each player's turn
 useEffect(()=>{
 if(screen!=="game"||turnStarted||players[curIdx]?.lives<=0) return;
@@ -583,7 +607,8 @@ function submit(valOverride){
 stopTimer();voice.stop();
 const val=(valOverride||transcript).trim();
 if(!val)return;
-const valid=getItems(category,letter);
+const effCat=turnCategory||category;
+const valid=getItems(effCat,letter);
 const norm=s=>s.toLowerCase().trim().replace(/[.'’-]/g,"").replace(/\s+/g," ");
 const forms=s=>{
   const n=norm(s);
@@ -602,11 +627,11 @@ const match=valid.find(c=>{
   for(const f of valForms) if(cForms.has(f)) return true;
   return false;
 });
-if(!match){setInpErr(`"${val}" — not on our ${CAT_SINGULAR[category]||"word"} list starting with ${letter}`);setTimeout(()=>loseLife(curIdx,`"${val}" not on our ${CAT_SINGULAR[category]||"word"} list`),900);return;}
+if(!match){setInpErr(`"${val}" — not on our ${CAT_SINGULAR[effCat]||"word"} list starting with ${letter}`);setTimeout(()=>loseLife(curIdx,`"${val}" not on our ${CAT_SINGULAR[effCat]||"word"} list`),900);return;}
 if(used.includes(match)){setInpErr(`${match} already used!`);setTimeout(()=>loseLife(curIdx,`${match} already used`),900);return;}
 setFlash({[curIdx]:"ok"});setTimeout(()=>setFlash({}),550);
 setUsed(u=>[...u,match]);setRoundLog(r=>[...r,match]);
-setFact({item:match,text:getFactFor(category,match),fromIdx:curIdx});
+setFact({item:match,text:getFactFor(effCat,match),category:effCat,fromIdx:curIdx});
 setTranscript("");setScreen("fact");
 }
 
@@ -621,6 +646,30 @@ const tick=()=>{
   else { setSpinning(false); }
 };
 tick();
+}
+
+function endGame(){
+if(!window.confirm("End the game now? The player with the most lives wins."))return;
+const alive=players.filter(p=>p.lives>0);
+if(alive.length===0){resetAll();return;}
+const maxL=Math.max(...alive.map(p=>p.lives));
+const leader=alive.find(p=>p.lives===maxL);
+stopTimer();voice.stop();
+setHallOfFame(prev=>{
+  const winEntry={date:new Date().toISOString(),category};
+  const existing=prev.find(r=>r.name.toLowerCase()===leader.name.toLowerCase());
+  const updated=existing
+    ?prev.map(r=>r.name.toLowerCase()===leader.name.toLowerCase()
+      ?{...r,wins:[...r.wins,winEntry],color:leader.color}
+      :r)
+    :[...prev,{name:leader.name,color:leader.color,wins:[winEntry]}];
+  localStorage.setItem("khoza-hof-v2",JSON.stringify(updated));
+  return updated;
+});
+setBrag(BRAGGING_RIGHTS[Math.floor(Math.random()*BRAGGING_RIGHTS.length)]);
+setForfeit(FORFEITS[Math.floor(Math.random()*FORFEITS.length)]);
+setWinner(leader);
+setScreen("winner");
 }
 
 function afterFact(){
@@ -655,7 +704,8 @@ const cur=players[curIdx];
 const arc=340-(340*(TIMER_MAX-timeLeft))/TIMER_MAX;
 const tCol=timeLeft<=5?"#ff4d6d":timeLeft<=10?"#ffaa00":"#00e5ff";
 const urgent=timeLeft<=10;
-const catCfg=CATEGORIES[category];
+const catCfg=CATEGORIES[turnCategory]||CATEGORIES[category];
+const isWild=category==="general";
 
 const particles=Array.from({length:16},(_,i)=>({
 left:`${5+i*6}%`,size:3+Math.random()*5,
@@ -931,6 +981,7 @@ return(
     {screen==="game"&&(
       <>
       <div className="players-list">
+        <button onClick={endGame} style={{position:"absolute",top:12,right:12,zIndex:5,padding:"8px 14px",borderRadius:10,border:"1px solid rgba(255,77,109,.45)",background:"rgba(255,77,109,.08)",color:"#ff4d6d",fontFamily:"'Black Han Sans',sans-serif",fontSize:12,letterSpacing:2,textTransform:"uppercase",cursor:"pointer"}}>End Game</button>
         {(()=>{
           const alive=players.map((p,i)=>({p,i})).filter(x=>x.p.lives>0);
           let nextIdx=-1;
@@ -1046,7 +1097,7 @@ return(
 
                     {/* category + letter prompt */}
                     <div style={{display:"flex",alignItems:"center",gap:14}}>
-                      <span style={{fontSize:14,letterSpacing:4,textTransform:"uppercase",color:"rgba(255,255,255,.5)",fontWeight:700}}>{catCfg.label}</span>
+                      <span style={{fontSize:14,letterSpacing:4,textTransform:"uppercase",color:"rgba(255,255,255,.5)",fontWeight:700}}>{isWild?`Wild · ${catCfg.label}`:catCfg.label}</span>
                       <div style={{width:68,height:68,borderRadius:14,background:`${p.color}22`,border:`2px solid ${p.color}80`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Black Han Sans',sans-serif",fontSize:40,color:p.color,flexShrink:0,boxShadow:`0 0 20px ${p.color}40`}}>
                         {letter}
                       </div>
@@ -1071,7 +1122,7 @@ return(
                       {transcript
                         ?<span style={{color:p.color}}>{transcript}</span>
                         :<span style={{color:"rgba(255,255,255,.28)",fontFamily:"'DM Sans',sans-serif",fontSize:16,fontWeight:500}}>
-                          {voice.listening?"Listening...":`Speak or type a ${CAT_SINGULAR[category]||"word"} with ${letter}...`}
+                          {voice.listening?"Listening...":`Speak or type a ${CAT_SINGULAR[turnCategory]||"word"} with ${letter}...`}
                         </span>
                       }
                     </div>
