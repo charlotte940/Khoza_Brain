@@ -230,81 +230,80 @@ const PRE_TURN_SECS=5;
 // Custom SVG glyphs per category — drawn into slices so we don't rely on emoji.
 const CAT_SINGULAR={countries:"country",vegetables:"vegetable",fruits:"fruit",colours:"colour",cars:"car brand",animals:"animal",cities:"city",general:"word"};
 
-// Monochrome "brain-with-topper" icons. Everything uses currentColor
-// so the pill can tint the icon to match its category title.
-
-const BRAIN_LINES=(
-<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round">
-  <path d="M -9 2 Q -10 -3 -6 -5 Q -5 -8 -2 -7 Q 0 -9 2 -7 Q 5 -8 6 -5 Q 10 -3 9 2 Q 10 7 6 9 Q 3 11 0 10 Q -3 11 -6 9 Q -10 7 -9 2 Z"/>
-  <path d="M 0 -7 Q -1 0 0 10"/>
-  <path d="M -5 -3 Q -7 0 -5 3"/>
-  <path d="M -3 4 Q -5 6 -3 8"/>
-  <path d="M 5 -3 Q 7 0 5 3"/>
-  <path d="M 3 4 Q 5 6 3 8"/>
-</g>
-);
+// Simple monochrome category icons (currentColor so the pill can tint them).
 
 const CAT_ICONS={
-countries:(<g>{BRAIN_LINES}
-  <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
-    <circle cx="0" cy="-6" r="4"/>
-    <ellipse cx="0" cy="-6" rx="4" ry="1.5"/>
-    <path d="M 0 -10 L 0 -2"/>
-  </g>
-</g>),
-vegetables:(<g>{BRAIN_LINES}
-  <path d="M -1.5 -3 L 1.5 -3 L 0.8 -9 L -0.8 -9 Z" fill="currentColor"/>
-  <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
-    <path d="M -1.5 -8 L -3 -11"/>
-    <path d="M 0 -9 L 0 -12.5"/>
-    <path d="M 1.5 -8 L 3 -11"/>
-  </g>
-</g>),
-fruits:(<g>{BRAIN_LINES}
-  <circle cx="0" cy="-6" r="3.6" fill="currentColor"/>
-  <path d="M 0 -9 Q 2 -11 3.5 -11" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-</g>),
-colours:(<g>{BRAIN_LINES}
-  <rect x="-5" y="-7" width="10" height="2.8" rx="0.6" fill="currentColor"/>
-  <path d="M 0 -7 L 0 -11.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
-  <circle cx="0" cy="-12" r="1.2" fill="currentColor"/>
-</g>),
-cars:(<g>{BRAIN_LINES}
-  <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" strokeLinecap="round">
-    <path d="M -5 -4 L -3.5 -7 L 3.5 -7 L 5 -4 L -5 -4 Z"/>
-    <rect x="-6" y="-4.5" width="12" height="3" rx="1"/>
-    <circle cx="-3.5" cy="-0.5" r="1.3"/>
-    <circle cx="3.5" cy="-0.5" r="1.3"/>
-  </g>
-</g>),
-animals:(<g>{BRAIN_LINES}
+countries:(
+<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <circle cx="0" cy="0" r="10"/>
+  <ellipse cx="0" cy="0" rx="10" ry="4"/>
+  <path d="M 0 -10 L 0 10"/>
+  <path d="M -10 0 L 10 0"/>
+</g>
+),
+vegetables:(
+<g strokeLinecap="round" strokeLinejoin="round">
+  <path d="M -3 -2 L 3 -2 L 2 10 L -2 10 Z" fill="currentColor"/>
+  <path d="M -3 -2 L -6 -8" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+  <path d="M 0 -2 L 0 -10" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+  <path d="M 3 -2 L 6 -8" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+</g>
+),
+fruits:(
+<g strokeLinecap="round" strokeLinejoin="round">
+  <circle cx="0" cy="2" r="8" fill="currentColor"/>
+  <path d="M 0 -6 Q 3 -9 6 -9" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+  <ellipse cx="5" cy="-9" rx="2.4" ry="1.2" fill="currentColor" transform="rotate(-30 5 -9)"/>
+</g>
+),
+colours:(
+<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round">
+  <path d="M -10 -1 Q -10 -10 0 -10 Q 10 -10 10 -1 Q 10 4 5 4 Q 1 4 1 7 Q 1 10 -2 10 Q -10 10 -10 -1 Z"/>
+  <circle cx="-5" cy="-5" r="1.4" fill="currentColor"/>
+  <circle cx="0" cy="-7" r="1.4" fill="currentColor"/>
+  <circle cx="5" cy="-4" r="1.4" fill="currentColor"/>
+</g>
+),
+cars:(
+<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <path d="M -11 3 L -9 -3 L -6 -6 L 6 -6 L 9 -3 L 11 3 L 11 6 L 8 6 L 8 5 L -8 5 L -8 6 L -11 6 Z"/>
+  <path d="M -7 -3 L 7 -3"/>
+  <circle cx="-6" cy="6" r="2.4" fill="currentColor"/>
+  <circle cx="6" cy="6" r="2.4" fill="currentColor"/>
+</g>
+),
+animals:(
+<g fill="currentColor">
+  <ellipse cx="-6" cy="-4" rx="2.3" ry="2.7"/>
+  <ellipse cx="-2" cy="-7" rx="2.3" ry="2.7"/>
+  <ellipse cx="2" cy="-7" rx="2.3" ry="2.7"/>
+  <ellipse cx="6" cy="-4" rx="2.3" ry="2.7"/>
+  <path d="M -6 0 Q 0 -3 6 0 Q 9 4 5 7 Q 0 10 -5 7 Q -9 4 -6 0 Z"/>
+</g>
+),
+cities:(
+<g>
   <g fill="currentColor">
-    <circle cx="-3.3" cy="-5.5" r="1.3"/>
-    <circle cx="-1.8" cy="-7" r="1.3"/>
-    <circle cx="1.8" cy="-7" r="1.3"/>
-    <circle cx="3.3" cy="-5.5" r="1.3"/>
-    <path d="M -3 -5 Q 0 -3 3 -5 Q 1.5 -1.5 0 -1.5 Q -1.5 -1.5 -3 -5 Z"/>
+    <rect x="-11" y="-1" width="3.5" height="11"/>
+    <rect x="-6.5" y="-6" width="3.5" height="16"/>
+    <rect x="-1.5" y="-10" width="3.5" height="20"/>
+    <rect x="3.5" y="-4" width="3.5" height="14"/>
+    <rect x="8.5" y="1" width="2.5" height="9"/>
   </g>
-</g>),
-cities:(<g>{BRAIN_LINES}
-  <g fill="currentColor">
-    <rect x="-6" y="-5" width="2.5" height="3"/>
-    <rect x="-3" y="-9" width="2.5" height="7"/>
-    <rect x="0.2" y="-11" width="2.5" height="9"/>
-    <rect x="3.4" y="-7" width="2.5" height="5"/>
-  </g>
-  <path d="M 1.4 -11 L 1.4 -13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-</g>),
-general:(<g>{BRAIN_LINES}
-  <g fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
-    <circle cx="0" cy="-8" r="3"/>
-    <path d="M -1.4 -5 L 1.4 -5"/>
-    <path d="M -1 -3.6 L 1 -3.6"/>
-    <path d="M -4.5 -12 L -6 -13"/>
-    <path d="M 0 -12 L 0 -13.8"/>
-    <path d="M 4.5 -12 L 6 -13"/>
-  </g>
-</g>),
+  <path d="M 0.25 -10 L 0.25 -13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+</g>
+),
+general:(
+<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <path d="M -5 0 Q -5 -9 0 -9 Q 5 -9 5 0 Q 5 3 3 5 L 3 8 L -3 8 L -3 5 Q -5 3 -5 0 Z"/>
+  <path d="M -2.5 10 L 2.5 10"/>
+  <path d="M -8 -4 L -11 -6"/>
+  <path d="M 0 -13 L 0 -11"/>
+  <path d="M 8 -4 L 11 -6"/>
+  <path d="M -8 -12 L -10 -13"/>
+  <path d="M 8 -12 L 10 -13"/>
+</g>
+),
 };
 const SLOT_COLORS=["#00e5ff","#ff4d6d","#69ff47","#bf5af2","#ff9f43","#ffd32a","#00cfff","#ff6eb4"];
 const SLOT_EMOJIS=["🦁","🐯","🦊","🐺","🦅","🐉","🦈","🦋"];
@@ -357,10 +356,6 @@ radial-gradient(ellipse 50% 40% at 50% 50%,rgba(191,90,242,0.04) 0%,transparent 
 /* LANDING */
 .landing{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;}
 .landing-title{font-family:'Black Han Sans',sans-serif;text-align:center;line-height:1.05;animation:titleIn 1s cubic-bezier(.34,1.2,.64,1);position:relative;z-index:1;}
-.landing-brain-wrap{position:relative;z-index:1;margin-bottom:14px;animation:brainIn 1s cubic-bezier(.34,1.4,.64,1);filter:drop-shadow(0 0 24px rgba(255,127,160,.45));}
-.landing-brain{color:#ff7fa0;animation:brainPulse 2.4s ease-in-out infinite;}
-@keyframes brainIn{0%{transform:scale(0) rotate(-20deg);opacity:0}60%{transform:scale(1.1) rotate(6deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
-@keyframes brainPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 @keyframes titleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
 .lt-family{font-size:13px;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:12px;display:block;}
 .lt-last{font-size:clamp(44px,9vw,80px);background:linear-gradient(150deg,#fff 30%,rgba(255,255,255,.55));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -905,11 +900,6 @@ return(
         {particles.map((p,i)=>(
           <div key={i} className="lt-p" style={{left:p.left,width:p.size,height:p.size,background:p.color,animationDuration:`${p.dur}s`,animationDelay:`${p.delay}s`}}/>
         ))}
-        <div className="landing-brain-wrap">
-          <svg width="160" height="160" viewBox="-14 -14 28 28" className="landing-brain">
-            {BRAIN_LINES}
-          </svg>
-        </div>
         <div className="landing-title">
           <span className="lt-family">The Khoza Family's</span>
           <div><span className="lt-last">Last </span><span className="lt-brain">Brain</span></div>
