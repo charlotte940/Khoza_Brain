@@ -56,6 +56,8 @@ const fmtTime=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).pad
 const PRE_TURN_SECS=5;
 
 // Custom SVG glyphs per category — drawn into slices so we don't rely on emoji.
+const CAT_SINGULAR={countries:"country",vegetables:"vegetable",fruits:"fruit",colours:"colour",cars:"car brand",animals:"animal",cities:"city",general:"word"};
+
 const CAT_ICONS={
 countries:<g fill="none" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"><circle cx="0" cy="0" r="7"/><ellipse cx="0" cy="0" rx="3" ry="7"/><line x1="-7" y1="0" x2="7" y2="0"/></g>,
 vegetables:<g><path d="M -3 -4 Q -1 -8 1 -5 Q 3 -8 4 -4 Q 6 -3 4 -1 L 2 6 Q 0 8 -2 6 L -4 -1 Q -6 -3 -3 -4 Z" fill="#fff"/><path d="M 0 -5 L 0 -8" stroke="#2e7d2e" strokeWidth="1.5" strokeLinecap="round"/></g>,
@@ -1002,7 +1004,7 @@ return(
                       {transcript
                         ?<span style={{color:p.color}}>{transcript}</span>
                         :<span style={{color:"rgba(255,255,255,.2)",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500}}>
-                          {voice.listening?"Listening...":`Speak or type a ${catCfg.label.slice(0,-1).toLowerCase()} with ${letter}...`}
+                          {voice.listening?"Listening...":`Speak or type a ${CAT_SINGULAR[category]||"word"} with ${letter}...`}
                         </span>
                       }
                     </div>
