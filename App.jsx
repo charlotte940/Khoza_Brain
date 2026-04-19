@@ -29,6 +29,10 @@ cities:{label:"Cities",emoji:"🏙️",color:"#00cfff",
 data:{A:["Abu Dhabi","Accra","Addis Ababa","Amsterdam","Ankara","Athens","Atlanta"],B:["Baghdad","Bangkok","Barcelona","Beijing","Belgrade","Berlin","Bogota","Brussels","Buenos Aires"],C:["Cairo","Cape Town","Casablanca","Chicago"],D:["Dakar","Dallas","Delhi","Dubai","Dublin"],E:["Edinburgh"],F:["Florence","Frankfurt"],G:["Geneva","Guangzhou"],H:["Hamburg","Hanoi","Havana","Helsinki","Hong Kong"],I:["Istanbul"],J:["Jakarta","Johannesburg"],K:["Kabul","Kampala","Karachi","Kuala Lumpur"],L:["Lagos","Lahore","Lima","Lisbon","London","Los Angeles","Lusaka"],M:["Madrid","Manila","Melbourne","Mexico City","Miami","Milan","Montreal","Moscow","Mumbai"],N:["Nairobi","Naples","New York"],O:["Oslo"],P:["Paris","Prague"],R:["Riyadh","Rome"],S:["Santiago","Seoul","Shanghai","Singapore","Stockholm","Sydney"],T:["Tehran","Tokyo","Toronto"],V:["Vancouver","Vienna"],W:["Warsaw"],Y:["Yangon"],Z:["Zurich"]},
 facts:{"Tokyo":["Tokyo is the most populated metro area — over 37 million people.","Tokyo has more Michelin-starred restaurants than any other city."],"London":["London has been continuously inhabited for over 2,000 years.","London's Underground opened in 1863 — the world's oldest metro."],"New York":["New York has 800 languages spoken — the most diverse city on Earth.","Central Park was entirely man-made, built in the 1850s."],"Dubai":["Dubai has the world's tallest building — the Burj Khalifa at 828 metres.","Dubai went from a fishing village to global metropolis in 50 years."],"Paris":["The Louvre is the world's most visited museum — 9 million visitors a year.","Paris was originally a small island settlement called Lutetia."],"Cape Town":["Table Mountain is 600 million years old.","Cape Town sits where the Atlantic and Indian Oceans meet."],"Singapore":["Singapore is one of only three city-states in the world.","Singapore has no natural freshwater — it recycles all its water."],"Istanbul":["Istanbul is the only city spanning two continents — Europe and Asia.","Istanbul has been the capital of three great empires."],"Lagos":["Lagos is Africa's largest city with up to 24 million people.","Lagos is one of the fastest-growing cities in the world."],"Johannesburg":["Johannesburg was built on the world's largest gold deposit.","Johannesburg is known as the City of Gold — eGoli in Zulu."]},
 defaultFact:(w)=>`${w} is a vibrant city with a unique history, culture and character.`},
+foods:{label:"Foods",emoji:"🍽️",color:"#ff7f50",
+data:{A:["Apple Pie","Arancini","Avocado Toast"],B:["Bagel","Bangers and Mash","Bibimbap","Biryani","Bolognese","Borscht","Bruschetta","Bunny Chow","Burger","Burrito"],C:["Cake","Calamari","Carbonara","Casserole","Ceviche","Cheesecake","Chicken Wings","Chilli","Chips","Chow Mein","Croissant","Curry"],D:["Dal","Dim Sum","Doughnut","Dumpling"],E:["Empanada","Enchiladas","Eggs Benedict"],F:["Fajitas","Falafel","Fish and Chips","Fondue","French Toast","Fries"],G:["Gazpacho","Gnocchi","Goulash","Gratin","Guacamole","Gumbo","Gyro"],H:["Haggis","Hot Dog","Hummus"],I:["Ice Cream","Irish Stew"],J:["Jambalaya","Jerky","Jollof Rice"],K:["Kebab","Kedgeree","Kimchi","Kofta"],L:["Laksa","Lasagne","Linguine","Lobster"],M:["Macaroni","Mac and Cheese","Meatballs","Miso Soup","Moussaka","Muffin"],N:["Nachos","Nasi Goreng","Noodles"],O:["Omelette","Osso Buco","Oysters"],P:["Paella","Pancakes","Pap","Pasta","Pavlova","Pie","Pizza","Poke","Porridge","Pulled Pork"],Q:["Quesadilla","Quiche","Quinoa Bowl"],R:["Ramen","Ravioli","Rice","Risotto"],S:["Salad","Samosa","Sandwich","Schnitzel","Scones","Shakshuka","Shawarma","Soup","Spaghetti","Steak","Stew","Sushi"],T:["Taco","Tagine","Tapas","Tempura","Tiramisu","Toast","Tortilla"],U:["Udon","Umngqusho"],V:["Vada Pav","Vegetable Stir-Fry","Vol-au-Vent"],W:["Waffle","Wontons","Wrap"],Y:["Yakitori","Yassa","Yogurt Parfait"],Z:["Ziti","Zeppole"]},
+facts:{"Pizza":["Pizza Margherita was invented in 1889 for Queen Margherita of Savoy — red tomato, white mozzarella, green basil for the Italian flag.","Italians eat on average 7.6kg of pizza per year."],"Sushi":["Sushi began in Southeast Asia as a way to preserve fish in fermented rice.","Nigiri sushi dates back to 1820s Tokyo street food."],"Burger":["The hamburger is named after Hamburg, Germany, brought to the US by immigrants.","Americans eat about 50 billion burgers a year."],"Pap":["Pap (maize porridge) has been a staple across Southern Africa for over 400 years.","Pap is called nshima in Zambia, sadza in Zimbabwe and ugali in East Africa."],"Bunny Chow":["Bunny Chow was invented in Durban, South Africa, by Indian sugarcane workers in the 1940s.","It's a hollowed-out loaf of bread filled with curry — and has no rabbit in it."],"Biryani":["Biryani comes from the Persian word birinj biryan — 'fried rice'.","Hyderabadi biryani is cooked 'dum' — sealed with dough and steamed."],"Sushi roll":["The California roll was invented in Los Angeles in the 1960s to win over Americans.","Inside-out rolls were created because Americans didn't like seeing seaweed on the outside."],"Ramen":["Ramen was originally Chinese — it arrived in Japan in the late 1800s.","Instant ramen was invented by Momofuku Ando in 1958."],"Taco":["The oldest taco is from Mexican silver miners in the 18th century — 'taco' means 'plug'.","October 4 is National Taco Day in the US."],"Curry":["The word curry comes from the Tamil 'kari', meaning sauce.","India alone has thousands of regional curry styles — no single dish is 'Indian curry'."],"Paella":["Paella comes from Valencia, Spain, and was originally a farmer's lunch.","True Valencian paella uses rabbit, chicken and snails — not seafood."],"Croissant":["The croissant came from 17th-century Vienna, Austria — not France.","The shape celebrates the defeat of the Ottoman Empire — their flag's crescent."],"Kimchi":["Kimchi is over 1,300 years old — fermented vegetables buried in clay jars.","South Korea has a national museum dedicated to kimchi."],"Pasta":["China had noodles 4,000 years ago — 2,000 before Italy.","There are over 350 shapes of pasta.","The average Italian eats 23kg of pasta a year."],"Chips":["Chips (fries) were invented in Belgium, not France — 'french' comes from the French verb 'to deep-fry'.","In 2008 Belgium applied to UNESCO to protect chips as cultural heritage."],"Fish and Chips":["Fish and chips became popular in Britain in the 1860s.","During WWII, fish and chips was one of the few foods not rationed."],"Sandwich":["Named after the 4th Earl of Sandwich in 1762, who wanted food he could eat with one hand while gambling.","The average American eats about 193 sandwiches a year."],"Hot Dog":["Hot dogs were nicknamed 'dachshund sausages' in Germany.","Americans eat 20 billion hot dogs a year."],"Doughnut":["The hole in the doughnut was invented in 1847 by a sailor who punched it out for faster cooking.","Dunkin' serves over 2 billion doughnuts annually."],"Ice Cream":["Ice cream was eaten in ancient China — snow flavoured with fruit juices.","The ice cream cone was invented at the 1904 St Louis World's Fair."]},
+defaultFact:(w)=>`${w} is a beloved dish enjoyed around the world.`},
 };
 
 // General: a mixed category drawing from everything above.
@@ -208,6 +212,7 @@ colours:[w=>`${w} is one of the colours our eyes can distinguish thanks to milli
 cars:[w=>`${w} designs engines, builds bodies and sells cars in dozens of countries.`,w=>`${w} has a distinctive badge, a home country and a specific place in motoring history.`,w=>`${w} vehicles have won races, set records or defined an era.`],
 animals:[w=>`${w} has evolved over millions of years to thrive in its habitat.`,w=>`${w} has unique senses, behaviours or features that help it survive.`,w=>`${w} plays a specific role in the ecosystem it calls home.`],
 cities:[w=>`${w} has its own skyline, markets and history woven into its streets.`,w=>`${w} is home to hundreds of thousands — or millions — of people from every walk of life.`,w=>`${w} has seen its share of history, trade and culture shape what it is today.`],
+foods:[w=>`${w} is enjoyed in homes and restaurants across cultures.`,w=>`${w} has roots in a specific tradition, then travelled the world.`,w=>`${w} is one of countless dishes humans have invented to celebrate flavour.`],
 general:[w=>`${w} — a great answer worth knowing more about!`],
 };
 function pickDefault(cat,w){
@@ -228,80 +233,95 @@ const fmtTime=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).pad
 const PRE_TURN_SECS=5;
 
 // Custom SVG glyphs per category — drawn into slices so we don't rely on emoji.
-const CAT_SINGULAR={countries:"country",vegetables:"vegetable",fruits:"fruit",colours:"colour",cars:"car brand",animals:"animal",cities:"city",general:"word"};
+const CAT_SINGULAR={countries:"country",vegetables:"vegetable",fruits:"fruit",colours:"colour",cars:"car brand",animals:"animal",cities:"city",foods:"food",general:"word"};
 
-// Simple monochrome category icons (currentColor so the pill can tint them).
+// Solid filled monochrome icons (currentColor) — chunky silhouettes.
 
 const CAT_ICONS={
 countries:(
-<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+<g fill="currentColor">
   <circle cx="0" cy="0" r="10"/>
-  <ellipse cx="0" cy="0" rx="10" ry="4"/>
-  <path d="M 0 -10 L 0 10"/>
-  <path d="M -10 0 L 10 0"/>
+  <g opacity=".35" fill="#000">
+    <ellipse cx="0" cy="0" rx="10" ry="3.2"/>
+    <path d="M 0 -10 Q 2 0 0 10 Q -2 0 0 -10 Z"/>
+  </g>
 </g>
 ),
 vegetables:(
-<g strokeLinecap="round" strokeLinejoin="round">
-  <path d="M -3 -2 L 3 -2 L 2 10 L -2 10 Z" fill="currentColor"/>
-  <path d="M -3 -2 L -6 -8" fill="none" stroke="currentColor" strokeWidth="1.8"/>
-  <path d="M 0 -2 L 0 -10" fill="none" stroke="currentColor" strokeWidth="1.8"/>
-  <path d="M 3 -2 L 6 -8" fill="none" stroke="currentColor" strokeWidth="1.8"/>
+<g fill="currentColor">
+  <path d="M -3.2 -2 L 3.2 -2 L 2.2 10 L -2.2 10 Z"/>
+  <path d="M -3 -2 Q -5 -7 -6 -9 Q -3 -8 -1.5 -3 Z"/>
+  <path d="M 3 -2 Q 5 -7 6 -9 Q 3 -8 1.5 -3 Z"/>
+  <path d="M 0 -3 Q -1 -9 0 -11 Q 1 -9 0 -3 Z"/>
 </g>
 ),
 fruits:(
-<g strokeLinecap="round" strokeLinejoin="round">
-  <circle cx="0" cy="2" r="8" fill="currentColor"/>
-  <path d="M 0 -6 Q 3 -9 6 -9" fill="none" stroke="currentColor" strokeWidth="1.8"/>
-  <ellipse cx="5" cy="-9" rx="2.4" ry="1.2" fill="currentColor" transform="rotate(-30 5 -9)"/>
+<g fill="currentColor">
+  <path d="M 0 -5 Q -9 -5 -9 3 Q -9 11 0 11 Q 9 11 9 3 Q 9 -5 0 -5 Z"/>
+  <path d="M 0 -5 Q 1 -9 4 -10 Q 3 -7 1 -5 Z"/>
 </g>
 ),
 colours:(
-<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round">
+<g fill="currentColor">
   <path d="M -10 -1 Q -10 -10 0 -10 Q 10 -10 10 -1 Q 10 4 5 4 Q 1 4 1 7 Q 1 10 -2 10 Q -10 10 -10 -1 Z"/>
-  <circle cx="-5" cy="-5" r="1.4" fill="currentColor"/>
-  <circle cx="0" cy="-7" r="1.4" fill="currentColor"/>
-  <circle cx="5" cy="-4" r="1.4" fill="currentColor"/>
+  <g opacity=".45" fill="#000">
+    <circle cx="-5" cy="-5" r="1.6"/>
+    <circle cx="0" cy="-7" r="1.6"/>
+    <circle cx="5" cy="-4" r="1.6"/>
+  </g>
 </g>
 ),
 cars:(
-<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-  <path d="M -11 3 L -9 -3 L -6 -6 L 6 -6 L 9 -3 L 11 3 L 11 6 L 8 6 L 8 5 L -8 5 L -8 6 L -11 6 Z"/>
-  <path d="M -7 -3 L 7 -3"/>
-  <circle cx="-6" cy="6" r="2.4" fill="currentColor"/>
-  <circle cx="6" cy="6" r="2.4" fill="currentColor"/>
+<g fill="currentColor">
+  <path d="M -11 2 L -9 -3 L -6 -6 L 6 -6 L 9 -3 L 11 2 L 11 6 L 8 6 L 8 5 L -8 5 L -8 6 L -11 6 Z"/>
+  <g opacity=".35" fill="#000">
+    <path d="M -6 -3 L 6 -3 L 5 -5 L -5 -5 Z"/>
+    <circle cx="-6" cy="6" r="2.4"/>
+    <circle cx="6" cy="6" r="2.4"/>
+  </g>
 </g>
 ),
 animals:(
 <g fill="currentColor">
-  <ellipse cx="-6" cy="-4" rx="2.3" ry="2.7"/>
-  <ellipse cx="-2" cy="-7" rx="2.3" ry="2.7"/>
-  <ellipse cx="2" cy="-7" rx="2.3" ry="2.7"/>
-  <ellipse cx="6" cy="-4" rx="2.3" ry="2.7"/>
+  <ellipse cx="-6" cy="-5" rx="2.3" ry="2.7"/>
+  <ellipse cx="-2" cy="-8" rx="2.3" ry="2.7"/>
+  <ellipse cx="2" cy="-8" rx="2.3" ry="2.7"/>
+  <ellipse cx="6" cy="-5" rx="2.3" ry="2.7"/>
   <path d="M -6 0 Q 0 -3 6 0 Q 9 4 5 7 Q 0 10 -5 7 Q -9 4 -6 0 Z"/>
 </g>
 ),
 cities:(
-<g>
-  <g fill="currentColor">
-    <rect x="-11" y="-1" width="3.5" height="11"/>
-    <rect x="-6.5" y="-6" width="3.5" height="16"/>
-    <rect x="-1.5" y="-10" width="3.5" height="20"/>
-    <rect x="3.5" y="-4" width="3.5" height="14"/>
-    <rect x="8.5" y="1" width="2.5" height="9"/>
-  </g>
-  <path d="M 0.25 -10 L 0.25 -13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
+<g fill="currentColor">
+  <rect x="-11" y="-1" width="3.5" height="11"/>
+  <rect x="-6.5" y="-6" width="3.5" height="16"/>
+  <rect x="-1.5" y="-10" width="3.5" height="20"/>
+  <rect x="3.5" y="-4" width="3.5" height="14"/>
+  <rect x="8.5" y="1" width="2.5" height="9"/>
+  <rect x="-0.5" y="-13" width="1.2" height="3"/>
+</g>
+),
+foods:(
+<g fill="currentColor">
+  <path d="M -6 -10 Q -6 -11 -5 -11 L -4 -11 Q -3 -11 -3 -10 L -3 -5 L -6 -5 Z"/>
+  <path d="M -5 -5 L -5 1"/>
+  <rect x="-5.5" y="-5" width="1.2" height="6"/>
+  <path d="M 5 -11 L 5 -3 Q 5 -2 4 -2 L 4 1 L 3 1 L 3 -11 Z"/>
+  <ellipse cx="0" cy="6" rx="11" ry="3.5"/>
+  <ellipse cx="0" cy="5" rx="11" ry="3.5" fill="#000" opacity=".25"/>
 </g>
 ),
 general:(
-<g fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-  <path d="M -5 0 Q -5 -9 0 -9 Q 5 -9 5 0 Q 5 3 3 5 L 3 8 L -3 8 L -3 5 Q -5 3 -5 0 Z"/>
-  <path d="M -2.5 10 L 2.5 10"/>
-  <path d="M -8 -4 L -11 -6"/>
-  <path d="M 0 -13 L 0 -11"/>
-  <path d="M 8 -4 L 11 -6"/>
-  <path d="M -8 -12 L -10 -13"/>
-  <path d="M 8 -12 L 10 -13"/>
+<g fill="currentColor">
+  <path d="M -5 -2 Q -5 -10 0 -10 Q 5 -10 5 -2 Q 5 2 3 4 L 3 7 L -3 7 L -3 4 Q -5 2 -5 -2 Z"/>
+  <rect x="-2.5" y="8" width="5" height="1.6" rx=".5"/>
+  <rect x="-2" y="10.5" width="4" height="1.4" rx=".5"/>
+  <g opacity=".7">
+    <rect x="-11" y="-5" width="3" height="1.4" rx=".5"/>
+    <rect x="8" y="-5" width="3" height="1.4" rx=".5"/>
+    <rect x="-0.7" y="-14" width="1.4" height="3" rx=".5"/>
+    <rect x="-10" y="-12" width="2.6" height="1.4" rx=".5" transform="rotate(-30 -10 -12)"/>
+    <rect x="7.4" y="-12" width="2.6" height="1.4" rx=".5" transform="rotate(30 7.4 -12)"/>
+  </g>
 </g>
 ),
 };
