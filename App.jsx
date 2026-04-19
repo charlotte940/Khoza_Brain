@@ -208,8 +208,9 @@ margin-bottom:5px;
 /* GAME — vertical player list */
 .players-list{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;}
 .pcard{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:flex .4s cubic-bezier(.34,1.2,.64,1),background .3s;}
-.pcard.active{flex:3.5;}
-.pcard.dead{flex:.35;opacity:.2;filter:grayscale(.9);}
+.pcard.active{flex:2.2;}
+.pcard.dead{flex:.3;opacity:.2;filter:grayscale(.9);}
+.pcard.next-up{box-shadow:inset 0 0 0 2px var(--nu,#fff)!important;}
 .pcard-content{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px 14px;}
 .pcard-row{display:flex;align-items:center;gap:8px;}
 .pcard-name{font-family:'Black Han Sans',sans-serif;font-size:15px;letter-spacing:.5px;}
@@ -877,18 +878,28 @@ return(
     {screen==="game"&&(
       <>
       <div className="players-list">
-        {players.map((p,i)=>{
+        {(()=>{
+          const alive=players.map((p,i)=>({p,i})).filter(x=>x.p.lives>0);
+          let nextIdx=-1;
+          if(alive.length>1){
+            const pos=alive.findIndex(x=>x.i===curIdx);
+            nextIdx=alive[(pos+1)%alive.length].i;
+          }
+          return players.map((p,i)=>{
           const isActive=curIdx===i&&p.lives>0;
           const isDead=p.lives<=0;
+          const isNextUp=i===nextIdx&&!isActive&&!isDead;
           const flashCls=flash[i]==="ok"?" flash-ok":flash[i]==="no"?" flash-no":"";
           const bg=isDead
             ?"rgba(255,255,255,.008)"
             :isActive
               ?`linear-gradient(160deg,${p.color}12,${p.color}04,rgba(13,17,23,0.7))`
-              :`linear-gradient(160deg,${p.color}07,${p.color}02)`;
+              :isNextUp
+                ?`linear-gradient(160deg,${p.color}14,${p.color}06)`
+                :`linear-gradient(160deg,${p.color}07,${p.color}02)`;
           return(
-            <div key={p.id} className={`pcard${isActive?" active":""}${isDead?" dead":""}${flashCls}`}
-              style={{background:bg,boxShadow:isActive?`inset 0 0 0 1px ${p.color}35`:`inset 0 0 0 1px rgba(255,255,255,.04)`}}>
+            <div key={p.id} className={`pcard${isActive?" active":""}${isDead?" dead":""}${isNextUp?" next-up":""}${flashCls}`}
+              style={{background:bg,boxShadow:isActive?`inset 0 0 0 1px ${p.color}35`:isNextUp?`inset 0 0 0 2px ${p.color}80`:`inset 0 0 0 1px rgba(255,255,255,.04)`,"--nu":p.color}}>
               <div className="pcard-sep"/>
               <div className="pcard-content">
                 {isDead?(
@@ -948,43 +959,42 @@ return(
                       >Skip →</button>
                     </div>
                   ):(
-                  <div style={{width:"100%",maxWidth:360,display:"flex",flexDirection:"column",gap:10}}>
+                  <div style={{width:"100%",maxWidth:560,display:"flex",flexDirection:"column",gap:18,padding:"0 12px"}}>
 
                     {/* ── Header: name + timer bar ── */}
-                    <div style={{display:"flex",alignItems:"center",gap:10}}>
-                      <div style={{width:9,height:9,borderRadius:"50%",background:p.color,boxShadow:`0 0 8px ${p.color}`,flexShrink:0}}/>
-                      <span style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:17,color:p.color,letterSpacing:.5,flex:1}}>{p.name}</span>
+                    <div style={{display:"flex",alignItems:"center",gap:14}}>
+                      <div style={{width:14,height:14,borderRadius:"50%",background:p.color,boxShadow:`0 0 12px ${p.color}`,flexShrink:0}}/>
+                      <span style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:32,color:p.color,letterSpacing:.8,flex:1}}>{p.name}</span>
                       {/* inline timer */}
-                      <div style={{display:"flex",alignItems:"center",gap:6,flexShrink:0}}>
+                      <div style={{display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
                         <span style={{
-                          fontFamily:"'Black Han Sans',sans-serif",fontSize:22,
-                          color:tCol,letterSpacing:1,
-                          textShadow:`0 0 12px ${tCol}`,
+                          fontFamily:"'Black Han Sans',sans-serif",fontSize:40,
+                          color:tCol,letterSpacing:1.5,
+                          textShadow:`0 0 14px ${tCol}`,
                           transition:"color .4s",
                         }}>{fmtTime(timeLeft)}</span>
-                        {/* tiny arc */}
-                        <svg width="28" height="28" viewBox="0 0 28 28" style={{transform:"rotate(-90deg)",flexShrink:0}}>
-                          <circle cx="14" cy="14" r="11" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="3"/>
-                          <circle cx="14" cy="14" r="11" fill="none" stroke={tCol} strokeWidth="3"
+                        <svg width="44" height="44" viewBox="0 0 44 44" style={{transform:"rotate(-90deg)",flexShrink:0}}>
+                          <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="4"/>
+                          <circle cx="22" cy="22" r="18" fill="none" stroke={tCol} strokeWidth="4"
                             strokeLinecap="round"
-                            strokeDasharray="69"
-                            strokeDashoffset={69-(69*(TIMER_MAX-timeLeft)/TIMER_MAX)}
-                            style={{transition:"stroke-dashoffset 1s linear,stroke .4s",filter:`drop-shadow(0 0 3px ${tCol})`}}/>
+                            strokeDasharray={2*Math.PI*18}
+                            strokeDashoffset={(2*Math.PI*18)*(TIMER_MAX-timeLeft)/TIMER_MAX}
+                            style={{transition:"stroke-dashoffset 1s linear,stroke .4s",filter:`drop-shadow(0 0 4px ${tCol})`}}/>
                         </svg>
                       </div>
                     </div>
 
                     {/* lives dots */}
-                    <div style={{display:"flex",gap:5}}>
+                    <div style={{display:"flex",gap:10}}>
                       {Array.from({length:lives}).map((_,j)=>(
-                        <div key={j} style={{width:6,height:6,borderRadius:"50%",background:j<p.lives?p.color:"rgba(255,255,255,.12)",boxShadow:j<p.lives?`0 0 5px ${p.color}`:"none"}}/>
+                        <div key={j} style={{width:14,height:14,borderRadius:"50%",background:j<p.lives?p.color:"rgba(255,255,255,.12)",boxShadow:j<p.lives?`0 0 8px ${p.color}`:"none"}}/>
                       ))}
                     </div>
 
                     {/* category + letter prompt */}
-                    <div style={{display:"flex",alignItems:"center",gap:8}}>
-                      <span style={{fontSize:9,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.3)",fontWeight:700}}>{catCfg.label}</span>
-                      <div style={{width:32,height:32,borderRadius:8,background:`${p.color}18`,border:`1px solid ${p.color}40`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Black Han Sans',sans-serif",fontSize:18,color:p.color,flexShrink:0}}>
+                    <div style={{display:"flex",alignItems:"center",gap:14}}>
+                      <span style={{fontSize:14,letterSpacing:4,textTransform:"uppercase",color:"rgba(255,255,255,.5)",fontWeight:700}}>{catCfg.label}</span>
+                      <div style={{width:68,height:68,borderRadius:14,background:`${p.color}22`,border:`2px solid ${p.color}80`,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Black Han Sans',sans-serif",fontSize:40,color:p.color,flexShrink:0,boxShadow:`0 0 20px ${p.color}40`}}>
                         {letter}
                       </div>
                     </div>
@@ -998,16 +1008,16 @@ return(
 
                     {/* transcript display */}
                     <div style={{
-                      minHeight:42,background:"rgba(0,0,0,.3)",
-                      border:`1px solid ${transcript?p.color+"50":"rgba(255,255,255,.1)"}`,
-                      borderRadius:10,padding:"10px 14px",
+                      minHeight:64,background:"rgba(0,0,0,.3)",
+                      border:`2px solid ${transcript?p.color+"70":"rgba(255,255,255,.12)"}`,
+                      borderRadius:14,padding:"14px 20px",
                       display:"flex",alignItems:"center",
-                      fontFamily:"'Black Han Sans',sans-serif",fontSize:15,letterSpacing:.5,
+                      fontFamily:"'Black Han Sans',sans-serif",fontSize:24,letterSpacing:.8,
                       transition:"border-color .2s",
                     }}>
                       {transcript
                         ?<span style={{color:p.color}}>{transcript}</span>
-                        :<span style={{color:"rgba(255,255,255,.2)",fontFamily:"'DM Sans',sans-serif",fontSize:12,fontWeight:500}}>
+                        :<span style={{color:"rgba(255,255,255,.28)",fontFamily:"'DM Sans',sans-serif",fontSize:16,fontWeight:500}}>
                           {voice.listening?"Listening...":`Speak or type a ${CAT_SINGULAR[category]||"word"} with ${letter}...`}
                         </span>
                       }
@@ -1016,7 +1026,7 @@ return(
                     {voice.error&&<div className="t-err" style={{color:"#ffb86b"}}>{voice.error}</div>}
 
                     {/* mic + type + submit row */}
-                    <div style={{display:"flex",gap:8,alignItems:"center"}}>
+                    <div style={{display:"flex",gap:12,alignItems:"center"}}>
 
                       {/* MIC BUTTON — primary */}
                       <button
@@ -1025,16 +1035,16 @@ return(
                           else{setTranscript("");setInpErr("");voice.clearError();voice.start();}
                         }}
                         style={{
-                          width:46,height:46,borderRadius:12,border:"none",flexShrink:0,cursor:"pointer",
+                          width:66,height:66,borderRadius:16,border:"none",flexShrink:0,cursor:"pointer",
                           background:voice.listening?p.color:"rgba(255,255,255,.07)",
-                          color:voice.listening?"#000":"rgba(255,255,255,.7)",
-                          fontSize:20,display:"flex",alignItems:"center",justifyContent:"center",
-                          boxShadow:voice.listening?`0 0 20px ${p.color}50`:"none",
+                          color:voice.listening?"#000":"rgba(255,255,255,.8)",
+                          fontSize:28,display:"flex",alignItems:"center",justifyContent:"center",
+                          boxShadow:voice.listening?`0 0 28px ${p.color}60`:"none",
                           transition:"all .2s",
                           animation:voice.listening?"micPulse .8s ease-in-out infinite":"none",
                         }}
                       >
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
                           <rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor"/>
                           <path d="M6 11a6 6 0 0 0 12 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
                           <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
@@ -1050,10 +1060,10 @@ return(
                         placeholder="or type..."
                         style={{
                           flex:1,background:"rgba(255,255,255,.05)",
-                          border:`1px solid rgba(255,255,255,.1)`,
-                          borderRadius:10,padding:"11px 12px",color:"#fff",
-                          fontFamily:"'DM Sans',sans-serif",fontSize:14,fontWeight:600,
-                          outline:"none",letterSpacing:.3,
+                          border:`1.5px solid rgba(255,255,255,.12)`,
+                          borderRadius:14,padding:"18px 18px",color:"#fff",
+                          fontFamily:"'DM Sans',sans-serif",fontSize:18,fontWeight:600,
+                          outline:"none",letterSpacing:.4,height:66,
                         }}
                         autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck={false} inputMode="text"
                       />
@@ -1061,13 +1071,13 @@ return(
                       {/* submit */}
                       <button
                         style={{
-                          width:46,height:46,borderRadius:12,border:"none",flexShrink:0,
+                          width:66,height:66,borderRadius:16,border:"none",flexShrink:0,
                           background:transcript.trim()?p.color:"rgba(255,255,255,.06)",
                           color:transcript.trim()?"#000":"rgba(255,255,255,.25)",
-                          fontFamily:"'Black Han Sans',sans-serif",fontSize:16,
+                          fontFamily:"'Black Han Sans',sans-serif",fontSize:24,
                           cursor:transcript.trim()?"pointer":"not-allowed",
                           transition:"all .2s",
-                          boxShadow:transcript.trim()?`0 0 16px ${p.color}40`:"none",
+                          boxShadow:transcript.trim()?`0 0 24px ${p.color}60`:"none",
                         }}
                         disabled={!transcript.trim()}
                         onClick={()=>submit()}
@@ -1076,21 +1086,22 @@ return(
                   </div>
                   )
                 ):(
-                  <div style={{display:"flex",alignItems:"center",gap:9,width:"100%",padding:"0 4px"}}>
-                    <div style={{width:5,height:5,borderRadius:"50%",background:p.color,opacity:.5,flexShrink:0}}/>
-                    <span style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:12,color:p.color,opacity:.5,letterSpacing:.3,flex:1}}>{p.name}</span>
-                    <div style={{display:"flex",gap:3}}>
+                  <div style={{display:"flex",alignItems:"center",gap:14,width:"100%",padding:"0 20px",maxWidth:560}}>
+                    <div style={{width:12,height:12,borderRadius:"50%",background:p.color,opacity:isNextUp?1:.7,boxShadow:isNextUp?`0 0 10px ${p.color}`:"none",flexShrink:0}}/>
+                    <span style={{fontFamily:"'Black Han Sans',sans-serif",fontSize:22,color:p.color,opacity:isNextUp?1:.65,letterSpacing:.5,flex:1}}>{p.name}</span>
+                    <div style={{display:"flex",gap:6}}>
                       {Array.from({length:lives}).map((_,j)=>(
-                        <div key={j} style={{width:4,height:4,borderRadius:"50%",background:j<p.lives?p.color:"rgba(255,255,255,.1)"}}/>
+                        <div key={j} style={{width:10,height:10,borderRadius:"50%",background:j<p.lives?p.color:"rgba(255,255,255,.12)",opacity:j<p.lives?.9:1}}/>
                       ))}
                     </div>
-                    <span style={{fontSize:7,letterSpacing:3,textTransform:"uppercase",color:"rgba(255,255,255,.18)",marginLeft:6,fontWeight:700}}>Waiting</span>
+                    <span style={{fontSize:10,letterSpacing:3,textTransform:"uppercase",color:isNextUp?p.color:"rgba(255,255,255,.3)",marginLeft:8,fontWeight:700}}>{isNextUp?"Next Up":"Waiting"}</span>
                   </div>
                 )}
               </div>
             </div>
           );
-        })}
+        });
+        })()}
       </div>
       {pass&&(
         <div className="pass" style={{border:`1px solid ${pass.color}40`,boxShadow:`0 0 0 4px ${pass.color}08,0 20px 60px rgba(0,0,0,.8)`}}>
