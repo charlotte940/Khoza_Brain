@@ -210,7 +210,6 @@ margin-bottom:5px;
 .pcard{flex:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;transition:flex .4s cubic-bezier(.34,1.2,.64,1),background .3s;}
 .pcard.active{flex:2.2;}
 .pcard.dead{flex:.3;opacity:.2;filter:grayscale(.9);}
-.pcard.next-up{box-shadow:inset 0 0 0 2px var(--nu,#fff)!important;}
 .pcard-content{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px 14px;}
 .pcard-row{display:flex;align-items:center;gap:8px;}
 .pcard-name{font-family:'Black Han Sans',sans-serif;font-size:15px;letter-spacing:.5px;}
@@ -899,7 +898,7 @@ return(
                 :`linear-gradient(160deg,${p.color}07,${p.color}02)`;
           return(
             <div key={p.id} className={`pcard${isActive?" active":""}${isDead?" dead":""}${isNextUp?" next-up":""}${flashCls}`}
-              style={{background:bg,boxShadow:isActive?`inset 0 0 0 1px ${p.color}35`:isNextUp?`inset 0 0 0 2px ${p.color}80`:`inset 0 0 0 1px rgba(255,255,255,.04)`,"--nu":p.color}}>
+              style={{background:bg,boxShadow:isActive?`inset 0 0 0 1px ${p.color}35`:isNextUp?`inset 6px 0 0 -2px ${p.color}`:`inset 0 0 0 1px rgba(255,255,255,.04)`}}>
               <div className="pcard-sep"/>
               <div className="pcard-content">
                 {isDead?(
