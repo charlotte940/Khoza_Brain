@@ -55,11 +55,6 @@ const TIMER_MAX=50;
 const fmtTime=s=>`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`;
 const PRE_TURN_SECS=5;
 
-// Shared-device seat rotation: alternate 0/180 so players facing each
-// other around the iPad each see their own section upright. Each
-// player can override with their flip button.
-const seatRotFor=(i,override)=>override!=null?override:(i%2===0?0:180);
-
 // Custom SVG glyphs per category — drawn into slices so we don't rely on emoji.
 const CAT_SINGULAR={countries:"country",vegetables:"vegetable",fruits:"fruit",colours:"colour",cars:"car brand",animals:"animal",cities:"city",general:"word"};
 
@@ -638,7 +633,7 @@ setScreen("game");setCurIdx(next);setTimeout(()=>setPass(null),1600);
 function addPlayer(){
 if(!newName.trim()||players.length>=8)return;
 const i=players.length;
-setPlayers([...players,{name:newName.trim(),lives,emoji:SLOT_EMOJIS[i],color:SLOT_COLORS[i],id:Date.now(),rot:null}]);
+setPlayers([...players,{name:newName.trim(),lives,emoji:SLOT_EMOJIS[i],color:SLOT_COLORS[i],id:Date.now()}]);
 setNewName("");
 }
 
@@ -955,20 +950,11 @@ return(
               :isNextUp
                 ?`linear-gradient(160deg,${p.color}14,${p.color}06)`
                 :`linear-gradient(160deg,${p.color}07,${p.color}02)`;
-          const rot=seatRotFor(i,p.rot);
           return(
             <div key={p.id} className={`pcard${isActive?" active":""}${isDead?" dead":""}${isNextUp?" next-up":""}${flashCls}`}
               style={{background:bg,boxShadow:isActive?`inset 0 0 0 1px ${p.color}35`:isNextUp?`inset 6px 0 0 -2px ${p.color}`:`inset 0 0 0 1px rgba(255,255,255,.04)`}}>
               <div className="pcard-sep"/>
-              <button onClick={()=>setPlayers(ps=>ps.map((x,j)=>j===i?{...x,rot:(seatRotFor(j,x.rot)+180)%360}:x))}
-                title="Flip to face my seat"
-                style={{position:"absolute",top:8,right:10,width:34,height:34,borderRadius:10,border:"none",background:"rgba(255,255,255,.06)",color:"rgba(255,255,255,.55)",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",zIndex:2}}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8M3 8v0h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16M21 16v0h-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </button>
-              <div className="pcard-content" style={{transform:`rotate(${rot}deg)`,transition:"transform .4s ease"}}>
+              <div className="pcard-content">
                 {isDead?(
                   <div style={{display:"flex",alignItems:"center",gap:8}}>
                     <div style={{width:5,height:5,borderRadius:"50%",background:p.color,opacity:.25}}/>
